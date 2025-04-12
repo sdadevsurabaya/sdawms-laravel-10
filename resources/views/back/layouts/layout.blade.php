@@ -11,6 +11,7 @@
         }
 
         body {
+            background-image: url('{{ asset("images/login-bg.jpg") }}');
             display: flex;
             flex-direction: column;
         }
