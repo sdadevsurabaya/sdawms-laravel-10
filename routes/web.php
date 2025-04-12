@@ -21,9 +21,7 @@ use App\Http\Controllers\Back\ItemController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [FrontHomeController::class, 'index']);
 
 Route::get('/login', [FrontHomeController::class, 'index'])->name('front.login');
 
