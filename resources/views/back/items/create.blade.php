@@ -27,7 +27,7 @@
                     <label>Rack</label>
                     <select name="rack_id" class="form-control" required>
                         @foreach ($racks as $rack)
-                            <option value="{{ $rack->id }}">{{ $rack->name }}</option>
+                            <option value="{{ $rack->id }}">{{ $rack->rack_number }}</option>
                         @endforeach
                     </select>
                 </div>
