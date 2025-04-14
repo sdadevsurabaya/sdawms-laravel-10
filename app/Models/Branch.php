@@ -9,7 +9,7 @@ class Branch extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'address'];
+    protected $fillable = ['name', 'address', 'phone'];
 
     public function warehouses()
     {
