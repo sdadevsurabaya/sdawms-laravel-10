@@ -9,7 +9,7 @@
                 @csrf
                 <div class="mb-3">
                     <label>Rack Name</label>
-                    <input type="text" name="name" class="form-control" required>
+                    <input type="text" name="rack_number" class="form-control" required>
                 </div>
                 <div class="mb-3">
                     <label>Warehouse</label>
