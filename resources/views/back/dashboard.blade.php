@@ -38,6 +38,77 @@
         </div>
     </div>
 
+         {{-- Search Form --}}
+         <div class="row mb-4">
+            <div class="col-md-6 mb-2">
+                <form method="GET" action="{{ route('admin.dashboard') }}">
+                    <div class="input-group">
+                        <input type="text" name="search_rack" class="form-control" placeholder="Cari kode rack..." value="{{ request('search_rack') }}">
+                        <button class="btn btn-warning" type="submit">Cari Rack</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-6 mb-2">
+                <form method="GET" action="{{ route('admin.dashboard') }}">
+                    <div class="input-group">
+                        <input type="text" name="search_item" class="form-control" placeholder="Cari nama/kode barang..." value="{{ request('search_item') }}">
+                        <button class="btn btn-danger" type="submit">Cari Barang</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {{-- Rack Result --}}
+        @if($racksWithItems->count())
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-warning text-white">
+                <strong>Hasil Pencarian Berdasarkan Rack</strong>
+            </div>
+            <div class="card-body">
+                @foreach($racksWithItems as $rack)
+                    <div class="mb-3">
+                        <h5>Rack: {{ $rack->rack_number }}</h5>
+                        <p>
+                            <strong>Warehouse:</strong> {{ $rack->warehouse->name }}<br>
+                            <strong>Branch:</strong> {{ $rack->warehouse->branch->name }}
+                        </p>
+                        <ul class="list-group">
+                            @forelse($rack->items as $item)
+                                <li class="list-group-item">{{ $item->code }} - {{ $item->name }}</li>
+                            @empty
+                                <li class="list-group-item text-muted">Tidak ada barang dalam rak ini.</li>
+                            @endforelse
+                        </ul>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
+        {{-- Item Result --}}
+        @if($itemsWithRack->count())
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-danger text-white">
+                <strong>Hasil Pencarian Berdasarkan Barang</strong>
+            </div>
+            <div class="card-body">
+                @foreach($itemsWithRack as $item)
+                    <div class="mb-3">
+                        <p class="mb-1">
+                            <strong>{{ $item->code }} - {{ $item->name }}</strong>
+                        </p>
+                        <small>
+                            Rack: {{ $item->rack->rack_number }} |
+                            Warehouse: {{ $item->rack->warehouse->name }} |
+                            Branch: {{ $item->rack->warehouse->branch->name }}
+                        </small>
+                        <hr>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
     {{-- Table: Racks and Items --}}
     <div class="card mb-5">
         <div class="card-header bg-dark text-white">Rack Overview by Branch & Warehouse</div>
@@ -56,7 +127,7 @@
                         <tbody>
                             @forelse ($warehouse->racks as $rack)
                                 <tr>
-                                    <td>{{ $rack->name }}</td>
+                                    <td>{{ $rack->rack_number }}</td>
                                     <td>{{ $rack->items->count() }}</td>
                                 </tr>
                             @empty
@@ -68,5 +139,11 @@
             @endforeach
         </div>
     </div>
+
+
+
+
+
+
 </div>
 @endsection
