@@ -24,11 +24,19 @@ class RackController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'rack_number' => 'required|string|max:255',
             'warehouse_id' => 'required|exists:warehouses,id',
         ]);
 
-        Rack::create($request->all());
+        $rackNumber = $request->rack_number;
+
+        Rack::create([
+            'rack_number' => $rackNumber,
+            'warehouse_id' => $request->warehouse_id,
+            'barcode' => 'BAR-' . strtoupper(preg_replace('/\s+/', '', $rackNumber)),
+            'gr_code' => 'QR-' . strtoupper(preg_replace('/\s+/', '', $rackNumber)),
+        ]);
+
         return redirect()->route('rack.index')->with('success', 'Rack created successfully.');
     }
 
