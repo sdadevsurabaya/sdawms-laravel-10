@@ -59,7 +59,7 @@
                 </form>
             </div>
             <div class="col-md-4 mb-2">
-                <button type="button" data-bs-toggle="modal" data-bs-target="#scannerModal" class="btn btn-primary w-100">
+                <button type="button" onclick="startScann();" class="btn btn-primary w-100">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                         class="bi bi-upc-scan" viewBox="0 0 16 16">
                         <path
@@ -77,123 +77,35 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="scannerModalLabel">Modal title</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" onclick="stopScanning();" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
                     </div>
-                    {{-- <div class="modal-body">
+                    <div class="modal-body">
                         <style>
-                            #camera video {
-                                width: 100%;
-                                max-width: 640px;
-                            }
-
-                            .error-message {
-                                color: red;
-                                margin-top: 10px;
-                                display: none;
+                            .barcode-bt {
+                                right: 19px;
+                                bottom: 2%;
+                                position: fixed;
+                                z-index: 100;
+                                padding: 10px;
+                                background-color: #25d366;
+                                width: 60px;
+                                height: 60px;
+                                border-radius: 50px;
+                                color: #fff;
+                                text-align: center;
+                                font-size: 30px;
+                                box-shadow: 2px 2px 3px #999;
                             }
                         </style>
-                        <div id="camera" style="width:100%"></div>
-                        <div id="error-message" class="error-message"></div>
-                        <script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2/dist/quagga.min.js"></script>
-                        <script>
-                            function showError(message) {
-                                const errorDiv = document.getElementById("error-message");
-                                errorDiv.textContent = message;
-                                errorDiv.style.display = "block";
-                            }
-                            const quaggaConf = {
-                                inputStream: {
-                                    target: document.querySelector("#camera"),
-                                    type: "LiveStream",
-                                    constraints: {
-                                        width: {
-                                            min: 640
-                                        },
-                                        height: {
-                                            min: 480
-                                        },
-                                        facingMode: "environment",
-                                        aspectRatio: {
-                                            min: 1,
-                                            max: 2
-                                        }
-                                    }
-                                },
-                                decoder: {
-                                    readers: ['code_128_reader']
-                                },
-                            }
+                        {{-- <link rel="stylesheet" href="{{ asset('css/qr-scanner/html5-qrcode-css.css') }}"> --}}
 
-                            Quagga.init(quaggaConf, function(err) {
-                                if (err) {
-                                    showError(err);
-                                    return console.log(err);
-                                }
-                                Quagga.start();
-                            });
-
-                            Quagga.onDetected(function(result) {
-                                alert("Detected barcode: " + result.codeResult.code);
-                            });
-                        </script>
-                    </div> --}}
-                    {{-- <div class="modal-body">
-                        <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script>
-                        <div id="qr-reader" style="width: 100%"></div>
-                        <div id="qr-reader-results"></div>
-                        <script>
-                            function showResult(message) {
-                                const errorDiv = document.getElementById("qr-reader-results");
-                                errorDiv.textContent = message;
-                            }
-
-                            function onScanSuccess(decodedText, decodedResult) {
-                                console.log(`Code scanned = ${decodedText}`, decodedResult);
-                                showResult(`Code scanned = ${decodedText}`, decodedResult);
-                            }
-                            var html5QrcodeScanner = new Html5QrcodeScanner(
-                                "qr-reader", {
-                                    fps: 10,
-                                    qrbox: 250
-                                });
-                            html5QrcodeScanner.render(onScanSuccess);
-                        </script>
-                    </div> --}}
-
-                    {{-- <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script>
-                    <div id="qr-reader" style="width: 100%"></div>
-                    <div id="qr-reader-results"></div>
-                    <script>
-                        const scannedCodes = [];
-
-                        function showResult(message) {
-                            const resultDiv = document.getElementById("qr-reader-results");
-                            resultDiv.textContent = message;
-                        }
-
-                        function onScanSuccess(decodedText, decodedResult) {
-                            console.log(`Code scanned = ${decodedText}`, decodedResult);
-
-                            // Check if code is already in array
-                            if (!scannedCodes.includes(decodedText)) {
-                                scannedCodes.push(decodedText);
-                                showResult(`Code scanned: ${decodedText}\nUnique codes: ${scannedCodes.join(', ')}`);
-                            } else {
-                                showResult(`Code already scanned: ${decodedText}\nUnique codes: ${scannedCodes.join(', ')}`);
-                            }
-                        }
-
-                        var html5QrcodeScanner = new Html5QrcodeScanner(
-                            "qr-reader", {
-                                fps: 10,
-                                qrbox: 250
-                            });
-                        html5QrcodeScanner.render(onScanSuccess);
-                    </script> --}}
-                    <div class="modal-body">
-                        {{-- <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script> --}}
                         <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-                        <div id="qr-reader" style="width: 100%;height: 50%;"></div>
+
+                        {{-- <script src="{{ asset('css/qr-scanner/html5-qrcode.min.js') }}"></script>
+                        <script src="{{ asset('js/qr-scanner/html5-qrcode.min.js') }}"></script> --}}
+                        <div id="qr-reader" style="width: 100%;">
+                        </div>
                         <div id="qr-reader-results">
                             <ul id="scanned-codes-list"></ul>
                         </div>
@@ -228,14 +140,31 @@
                                 }
                             }
 
+                            function onScanFailure(error) {
+                                // handle scan failure, usually better to ignore and keep scanning.
+                                console.warn(`QR error = ${error}`);
+                            }
+
                             var html5QrcodeScanner = new Html5QrcodeScanner(
                                 "qr-reader", {
                                     fps: 10,
-                                    qrbox: {width: 300, height: 120},
-                                    // qrbox: 200,
-                                    aspectRatio: 1.5,
-                                });
-                            html5QrcodeScanner.render(onScanSuccess);
+                                    qrbox: {
+                                        width: 300,
+                                        height: 120
+                                    },
+                                    // qrbox: 250,
+                                    aspectRatio: 1.0
+                                }, false);
+
+                            function startScann() {
+                                html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+                                $('#scannerModal').modal('show');
+                            }
+
+                            function stopScanning() {
+                                html5QrcodeScanner.clear();
+                                $('#scannerModal').modal('hide');
+                            }
                         </script>
                     </div>
                     <div class="modal-footer">
