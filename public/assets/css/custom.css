@@ -1,0 +1,108 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+
+body {
+    background-image: url("/images/login-bg.jpg");
+    display: flex;
+    flex-direction: column;
+}
+
+/* LAYOUT */
+.wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    min-height: 0;
+}
+
+.content-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+    padding: 1rem;
+}
+
+/* SIDEBAR */
+.sidebar {
+    background-color: #343a40;
+    color: #fff;
+}
+
+.sidebar a {
+    color: white;
+    padding: 12px 20px;
+    display: block;
+    text-decoration: none;
+}
+
+.sidebar a:hover {
+    background-color: #495057;
+}
+
+.sidebar ul li a i{
+    display: inline-block;
+    min-width: 1.5rem;
+    padding-bottom: .125em;
+    font-size: 1.05rem;
+    line-height: 1.40625rem;
+    vertical-align: middle;
+    color: #7b8190;
+    transition: all .4s;
+}
+
+.menu-list{
+    display: block;
+    padding: .6rem 1.1rem;
+    color: #7b8190;
+    position: relative;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all .4s;
+    /* margin: 0 10px; */
+    border-radius: 3px;
+}
+
+.menu-list li {
+    display: block;
+    width: 100%;
+}
+
+/* SIDEBAR */
+
+
+/* FOOTER */
+footer {
+    background-color: #212529;
+    color: white;
+    padding: 1rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        order: 1;
+    }
+
+    .content-wrapper {
+        order: 2;
+        width: 100%;
+    }
+}
+
+@media (min-width: 769px) {
+    .sidebar {
+        width: 250px;
+        min-height: 100vh;
+    }
+}
+
