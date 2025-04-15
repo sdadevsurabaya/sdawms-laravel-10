@@ -98,12 +98,9 @@
                                 box-shadow: 2px 2px 3px #999;
                             }
                         </style>
-                        {{-- <link rel="stylesheet" href="{{ asset('css/qr-scanner/html5-qrcode-css.css') }}"> --}}
 
                         <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
-                        {{-- <script src="{{ asset('css/qr-scanner/html5-qrcode.min.js') }}"></script>
-                        <script src="{{ asset('js/qr-scanner/html5-qrcode.min.js') }}"></script> --}}
                         <div id="qr-reader" style="width: 100%;">
                         </div>
                         <div id="qr-reader-results">
@@ -168,8 +165,7 @@
                         </script>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="stopScanning();">Close</button>
                     </div>
                 </div>
             </div>
