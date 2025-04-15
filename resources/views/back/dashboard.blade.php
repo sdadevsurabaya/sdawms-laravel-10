@@ -137,7 +137,7 @@
                             });
                         </script>
                     </div> --}}
-                    <div class="modal-body">
+                    {{-- <div class="modal-body">
                         <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script>
                         <div id="qr-reader" style="width: 100%"></div>
                         <div id="qr-reader-results"></div>
@@ -145,7 +145,6 @@
                             function showResult(message) {
                                 const errorDiv = document.getElementById("qr-reader-results");
                                 errorDiv.textContent = message;
-                                // errorDiv.style.display = "block";
                             }
 
                             function onScanSuccess(decodedText, decodedResult) {
@@ -156,6 +155,85 @@
                                 "qr-reader", {
                                     fps: 10,
                                     qrbox: 250
+                                });
+                            html5QrcodeScanner.render(onScanSuccess);
+                        </script>
+                    </div> --}}
+
+                    {{-- <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script>
+                    <div id="qr-reader" style="width: 100%"></div>
+                    <div id="qr-reader-results"></div>
+                    <script>
+                        const scannedCodes = [];
+
+                        function showResult(message) {
+                            const resultDiv = document.getElementById("qr-reader-results");
+                            resultDiv.textContent = message;
+                        }
+
+                        function onScanSuccess(decodedText, decodedResult) {
+                            console.log(`Code scanned = ${decodedText}`, decodedResult);
+
+                            // Check if code is already in array
+                            if (!scannedCodes.includes(decodedText)) {
+                                scannedCodes.push(decodedText);
+                                showResult(`Code scanned: ${decodedText}\nUnique codes: ${scannedCodes.join(', ')}`);
+                            } else {
+                                showResult(`Code already scanned: ${decodedText}\nUnique codes: ${scannedCodes.join(', ')}`);
+                            }
+                        }
+
+                        var html5QrcodeScanner = new Html5QrcodeScanner(
+                            "qr-reader", {
+                                fps: 10,
+                                qrbox: 250
+                            });
+                        html5QrcodeScanner.render(onScanSuccess);
+                    </script> --}}
+                    <div class="modal-body">
+                        {{-- <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script> --}}
+                        <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+                        <div id="qr-reader" style="width: 100%;height: 50%;"></div>
+                        <div id="qr-reader-results">
+                            <ul id="scanned-codes-list"></ul>
+                        </div>
+                        <script>
+                            const scannedCodes = [];
+
+                            function updateResultList(message) {
+                                const resultList = document.getElementById("scanned-codes-list");
+                                resultList.innerHTML = ''; // Clear existing list
+                                scannedCodes.forEach(code => {
+                                    const li = document.createElement("li");
+                                    li.textContent = code;
+                                    resultList.appendChild(li);
+                                });
+                                // Add message as the first item if provided
+                                if (message) {
+                                    const li = document.createElement("li");
+                                    li.textContent = message;
+                                    resultList.insertBefore(li, resultList.firstChild);
+                                }
+                            }
+
+                            function onScanSuccess(decodedText, decodedResult) {
+                                console.log(`Code scanned = ${decodedText}`, decodedResult);
+
+                                // Check if code is already in array
+                                if (!scannedCodes.includes(decodedText)) {
+                                    scannedCodes.push(decodedText);
+                                    updateResultList(`Code scanned: ${decodedText}`);
+                                } else {
+                                    updateResultList(`Code already scanned: ${decodedText}`);
+                                }
+                            }
+
+                            var html5QrcodeScanner = new Html5QrcodeScanner(
+                                "qr-reader", {
+                                    fps: 10,
+                                    qrbox: {width: 300, height: 120},
+                                    // qrbox: 200,
+                                    aspectRatio: 1.5,
                                 });
                             html5QrcodeScanner.render(onScanSuccess);
                         </script>
