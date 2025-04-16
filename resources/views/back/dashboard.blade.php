@@ -123,15 +123,15 @@
                             }
 
                             function onScanSuccess(decodedText, decodedResult) {
-                                console.log(`Code scanned = ${decodedText}`, decodedResult);
-                                const countResult = document.getElementById("qr-reader-results");
+                                // console.log(`Code scanned = ${decodedText}`, decodedResult);
+                                // const countResult = document.getElementById("qr-reader-results");
                                 countSuccessScan += 1;
                                 if (scanCode == decodedText) {
                                     if (countSuccessScan == 12) {
                                         html5QrcodeScanner.clear();
                                         Swal.fire({
                                             title: decodedText,
-                                            text: "Apa anda ingin mencari kode barang ini?",
+                                            text: "Apa anda ingin mencari kode rak / barang ini?",
                                             icon: "warning",
                                             showCancelButton: true,
                                             cancelButtonColor: "#d33",
@@ -141,6 +141,7 @@
 
                                         }).then((result) => {
                                             if (result.isConfirmed) {
+                                                stopScanning();
                                                 window.location.href = "{{ route('admin.dashboard') }}?scancode=" + decodedText;
 
                                             } else {
@@ -153,7 +154,7 @@
                                     scanCode = decodedText;
                                     countSuccessScan = 1;
                                 }
-                                countResult.innerHTML = 'jumlah scan: ' + countSuccessScan;
+                                // countResult.innerHTML = 'jumlah scan: ' + countSuccessScan;
                             }
 
                             function onScanFailure(error) {
