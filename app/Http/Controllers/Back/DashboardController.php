@@ -14,47 +14,67 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-    $branchCount = Branch::count();
-    $warehouseCount = Warehouse::count();
-    $rackCount = Rack::count();
-    $itemCount = Item::count();
+        $branchCount = Branch::count();
+        $warehouseCount = Warehouse::count();
+        $rackCount = Rack::count();
+        $itemCount = Item::count();
 
-    $branches = Branch::with(['warehouses.racks.items'])->get();
+        $branches = Branch::with(['warehouses.racks.items'])->get();
 
-    $searchRack = $request->input('search_rack');
-    $searchItem = $request->input('search_item');
+        $searchRack = $request->input('search_rack');
+        $searchItem = $request->input('search_item');
+        $scanCOde = $request->input('scancode');
 
-    $racksWithItems = collect();
-    $itemsWithRack = collect();
+        $racksWithItems = collect();
+        $itemsWithRack = collect();
 
-    if ($searchRack) {
-        $racksWithItems = Rack::with(['items', 'warehouse.branch'])
+        if ($searchRack) {
+            $racksWithItems = $this->rackWithItems($searchRack);
+        }
+
+        if ($searchItem) {
+            $itemsWithRack = $this->itemWithRack($searchItem);
+        }
+
+        if ($scanCOde) {
+            $racksWithItems = $this->rackWithItems($scanCOde);
+            if ($racksWithItems->isEmpty()) {
+                $itemsWithRack = $this->itemWithRack($scanCOde);
+            }
+        }
+
+        return view('back.dashboard', [
+            'branchCount' => \App\Models\Branch::count(),
+            'warehouseCount' => \App\Models\Warehouse::count(),
+            'rackCount' => \App\Models\Rack::count(),
+            'itemCount' => \App\Models\Item::count(),
+            'racksWithItems' => $racksWithItems,
+            'itemsWithRack' => $itemsWithRack,
+            'branches' => $branches,
+        ]);
+
+
+
+        // return view('back.dashboard', compact(
+        //     'branchCount', 'warehouseCount', 'rackCount', 'itemCount', 'branches'
+        // ));
+
+
+    }
+
+    private function rackWithItems($searchRack)
+    {
+        return Rack::with(['items', 'warehouse.branch'])
             ->where('rack_number', 'like', "%{$searchRack}%")
             ->get();
     }
 
-    if ($searchItem) {
-        $itemsWithRack = Item::with(['rack.warehouse.branch'])
+    private function itemWithRack($searchItem)
+    {
+        return Item::with(['rack.warehouse.branch'])
             ->where('name', 'like', "%{$searchItem}%")
             ->orWhere('qr_code', 'like', "%{$searchItem}%")
             ->orWhere('barcode', 'like', "%{$searchItem}%")
             ->get();
-    }
-
-    return view('back.dashboard', [
-        'branchCount' => \App\Models\Branch::count(),
-        'warehouseCount' => \App\Models\Warehouse::count(),
-        'rackCount' => \App\Models\Rack::count(),
-        'itemCount' => \App\Models\Item::count(),
-        'racksWithItems' => $racksWithItems,
-        'itemsWithRack' => $itemsWithRack,
-        'branches' => $branches,
-    ]);
-
-    // return view('back.dashboard', compact(
-    //     'branchCount', 'warehouseCount', 'rackCount', 'itemCount', 'branches'
-    // ));
-
-
     }
 }
