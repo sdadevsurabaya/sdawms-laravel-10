@@ -81,24 +81,6 @@
                             aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <style>
-                            .barcode-bt {
-                                right: 19px;
-                                bottom: 2%;
-                                position: fixed;
-                                z-index: 100;
-                                padding: 10px;
-                                background-color: #25d366;
-                                width: 60px;
-                                height: 60px;
-                                border-radius: 50px;
-                                color: #fff;
-                                text-align: center;
-                                font-size: 30px;
-                                box-shadow: 2px 2px 3px #999;
-                            }
-                        </style>
-
                         <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
                         <div id="qr-reader" style="width: 100%;">
@@ -106,8 +88,23 @@
                         <div id="qr-reader-results">
                             <ul id="scanned-codes-list"></ul>
                         </div>
+                        <div id="qr-reader-results2">
+                        </div>
                         <script>
-                            const scannedCodes = [];
+                            var scannedCodes = [];
+                            let scanCode = '';
+                            var countSuccessScan = 0;
+                            var html5QrcodeScanner = new Html5QrcodeScanner(
+                                "qr-reader", {
+                                    fps: 10,
+                                    qrbox: {
+                                        width: 300,
+                                        height: 120
+                                    },
+                                    aspectRatio: 1.0,
+                                    supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
+                                    rememberLastUsedCamera: true
+                                }, false);
 
                             function updateResultList(message) {
                                 const resultList = document.getElementById("scanned-codes-list");
@@ -127,14 +124,36 @@
 
                             function onScanSuccess(decodedText, decodedResult) {
                                 console.log(`Code scanned = ${decodedText}`, decodedResult);
+                                const countResult = document.getElementById("qr-reader-results");
+                                countSuccessScan += 1;
+                                if (scanCode == decodedText) {
+                                    if (countSuccessScan == 12) {
+                                        html5QrcodeScanner.clear();
+                                        Swal.fire({
+                                            title: decodedText,
+                                            text: "Apa anda ingin mencari kode barang ini?",
+                                            icon: "warning",
+                                            showCancelButton: true,
+                                            cancelButtonColor: "#d33",
+                                            cancelButtonText: "Tidak",
+                                            confirmButtonColor: "#3085d6",
+                                            confirmButtonText: "YA"
 
-                                // Check if code is already in array
-                                if (!scannedCodes.includes(decodedText)) {
-                                    scannedCodes.push(decodedText);
-                                    updateResultList(`Code scanned: ${decodedText}`);
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                window.location.href = "{{ route('admin.dashboard') }}?scancode=" + decodedText;
+
+                                            } else {
+                                                countSuccessScan = 0;
+                                                html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+                                            }
+                                        });
+                                    }
                                 } else {
-                                    updateResultList(`Code already scanned: ${decodedText}`);
+                                    scanCode = decodedText;
+                                    countSuccessScan = 1;
                                 }
+                                countResult.innerHTML = 'jumlah scan: ' + countSuccessScan;
                             }
 
                             function onScanFailure(error) {
@@ -142,30 +161,24 @@
                                 console.warn(`QR error = ${error}`);
                             }
 
-                            var html5QrcodeScanner = new Html5QrcodeScanner(
-                                "qr-reader", {
-                                    fps: 10,
-                                    qrbox: {
-                                        width: 300,
-                                        height: 120
-                                    },
-                                    // qrbox: 250,
-                                    aspectRatio: 1.0
-                                }, false);
-
                             function startScann() {
+                                countSuccessScan = 0;
                                 html5QrcodeScanner.render(onScanSuccess, onScanFailure);
                                 $('#scannerModal').modal('show');
                             }
 
                             function stopScanning() {
+                                const resultList = document.getElementById("scanned-codes-list");
+                                resultList.innerHTML = ''; // Clear existing list
+                                scannedCodes = [];
                                 html5QrcodeScanner.clear();
                                 $('#scannerModal').modal('hide');
                             }
                         </script>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="stopScanning();">Close</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            onclick="stopScanning();">Close</button>
                     </div>
                 </div>
             </div>
