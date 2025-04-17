@@ -10,6 +10,8 @@ use App\Http\Controllers\Back\BranchController;
 use App\Http\Controllers\Back\WarehouseController;
 use App\Http\Controllers\Back\RackController;
 use App\Http\Controllers\Back\ItemController;
+use Illuminate\Support\Facades\Auth;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -24,9 +26,34 @@ use App\Http\Controllers\Back\ItemController;
 Route::get('/', [FrontHomeController::class, 'index']);
 
 Route::get('/login', [FrontHomeController::class, 'index'])->name('front.login');
+Route::post('/login', [FrontHomeController::class, 'login'])->name('submit.login');
+Route::post('/logout',[FrontHomeController::class, 'logout'])->name('logout');
+Route::get('/refresh-csrf', function () {
+    return response()->json(['csrfToken' => csrf_token()]);
+});
+
+/*------------------------------------------
+--------------------------------------------
+ADMIN Routes List
+--------------------------------------------
+--------------------------------------------*/
+Route::middleware(['auth', 'user.roles:1'])->group(function () {
+    Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+});
 
 
-Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+/*------------------------------------------
+--------------------------------------------
+GUDANG Routes List
+--------------------------------------------
+--------------------------------------------*/
+Route::middleware(['auth', 'user.roles:2'])->group(function () {
+    Route::get('/gudang/dashboard', function () {
+        return "<h1>DASHBOARD GUDANG</h1>";
+    })->name('gudang.dashboard');
+});
+
+
 
 
 
