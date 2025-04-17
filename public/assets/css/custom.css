@@ -37,56 +37,6 @@ main {
     padding: 1rem;
 }
 
-/* SIDEBAR */
-.sidebar {
-    background-color: #343a40;
-    color: #fff;
-}
-
-.sidebar a {
-    color: white;
-    padding: 12px 20px;
-    display: block;
-    text-decoration: none;
-}
-
-.sidebar a:hover {
-    background-color: #495057;
-}
-
-.sidebar ul li a i{
-    display: inline-block;
-    min-width: 1.5rem;
-    padding-bottom: .125em;
-    font-size: 1.05rem;
-    line-height: 1.40625rem;
-    vertical-align: middle;
-    color: #7b8190;
-    transition: all .4s;
-}
-
-.menu-list{
-    display: block;
-    padding: .6rem 1.1rem;
-    color: #7b8190;
-    position: relative;
-    font-size: 15px;
-    font-weight: 500;
-    transition: all .4s;
-    /* margin: 0 10px; */
-    border-radius: 3px;
-}
-
-.menu-list li {
-    display: block;
-    width: 100%;
-}
-
-
-
-/* SIDEBAR */
-
-
 /* FOOTER */
 footer {
     background-color: #8a2432;
@@ -94,6 +44,15 @@ footer {
     padding: 1rem;
 }
 
+/* sidebar */
+
+.nav_image img {
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    filter: invert(1) brightness(3);
+}
 
 /* RESPONSIVE */
 @media (max-width: 768px) {

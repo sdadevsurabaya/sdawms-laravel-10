@@ -45,6 +45,10 @@
     display: none;
 }
 
+#sidebar:not(.expand) .toggle-btn {
+    margin-left: 0 !important;
+}
+
 .sidebar-nav {
     padding: 2rem 0;
     flex: 1 1 auto;
@@ -66,7 +70,7 @@ a.sidebar-link {
 
 a.sidebar-link:hover {
     background-color: rgba(255, 255, 255, .075);
-    border-left: 3px solid #8a2432;
+    border-left: 3px solid #fff;
 }
 
 .sidebar-item {

@@ -3,10 +3,12 @@
         <div class="sidebar-logo">
             <a href="#" class="text-decoration-none mx-auto">SDA WMS</a>
         </div>
-        <button class="toggle-btn" type="button">
+        <button class="toggle-btn ms-3" type="button">
             <i class="fa-solid fa-bars"></i>
         </button>
     </div>
+
+
     <div class="offcanvas-header d-block text-center text-light position-relative py-4">
         <div class="position-relative d-inline-block mb-1">
             <img src="/images/300-1.jpg" class="img-thumbnail rounded-circle border-0 bg-dark" width="66"

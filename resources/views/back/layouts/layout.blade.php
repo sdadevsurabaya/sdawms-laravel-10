@@ -9,11 +9,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="/assets/css/custom.css">
     {{-- sidebar --}}
-    {{-- <link rel="stylesheet" href="/assets/css/sidebar.css"> --}}
-    <link rel="stylesheet" href="/assets/css/style.css">
+    {{-- <link rel="stylesheet" href="/assets/css/style.css"> --}}
     <link rel="stylesheet" href="/assets/css/main_sidebar.css">
     <script src="/assets/js/jquery-3.7.1.min.js.js"></script>
-    {{-- <script href="/assets/js/main_sidebar.js"></script> --}}
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
