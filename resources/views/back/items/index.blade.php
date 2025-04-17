@@ -25,7 +25,7 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $item->name }}</td>
-                            <td>{{ $item->rack->name }}</td>
+                            <td>{{ $item->rack->rack_number }}</td>
                             <td>{{ $item->qr_code }}</td>
                             <td>{{ $item->barcode }}</td>
                             <td>

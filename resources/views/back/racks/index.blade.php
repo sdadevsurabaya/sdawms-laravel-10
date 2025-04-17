@@ -22,14 +22,18 @@
                     @foreach ($racks as $rack)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $rack->name }}</td>
+                            <td>{{ $rack->rack_number }}</td>
                             <td>{{ $rack->warehouse->name }}</td>
                             <td>
+
+                                <a href="{{ route('rack.show', $rack->id) }}" class="btn btn-sm btn-info">Detail</a>
                                 <a href="{{ route('rack.edit', $rack->id) }}" class="btn btn-warning btn-sm">Edit</a>
                                 <form action="{{ route('rack.destroy', $rack->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this rack?')">
                                     @csrf @method('DELETE')
                                     <button class="btn btn-danger btn-sm">Del</button>
                                 </form>
+
+
                             </td>
                         </tr>
                     @endforeach
