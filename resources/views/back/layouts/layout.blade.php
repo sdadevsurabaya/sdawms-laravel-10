@@ -14,6 +14,81 @@
     <link rel="stylesheet" href="/assets/css/main_sidebar.css">
     <script src="/assets/js/jquery-3.7.1.min.js.js"></script>
     {{-- <script href="/assets/js/main_sidebar.js"></script> --}}
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            background-image: url('{{ asset("images/login-bg.jpg") }}');
+            display: flex;
+            flex-direction: column;
+        }
+
+        .wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            min-height: 0;
+        }
+
+        .sidebar {
+            background-color: #343a40;
+            color: #fff;
+        }
+
+        .sidebar a {
+            color: white;
+            padding: 12px 20px;
+            display: block;
+            text-decoration: none;
+        }
+
+        .sidebar a:hover {
+            background-color: #495057;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1;
+            padding: 1rem;
+        }
+
+        footer {
+            background-color: #212529;
+            color: white;
+            padding: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                order: 1;
+            }
+
+            .content-wrapper {
+                order: 2;
+                width: 100%;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .sidebar {
+                width: 250px;
+                min-height: 100vh;
+            }
+        }
+    </style>
 </head>
 
 <body>
