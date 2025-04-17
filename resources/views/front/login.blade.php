@@ -22,7 +22,7 @@
     <div class="login-card">
         <h3 class="text-center mb-4">SDA</h3>
         <h4 class="text-center mb-4">WMS (WAREHOUSE MANAGEMENT SYSTEMS)</h4>
-        <form method="POST" action="#">
+        <form method="POST" action="{{ route('submit.login') }}">
             @csrf
             <div class="mb-3">
                 <label>Email</label>
