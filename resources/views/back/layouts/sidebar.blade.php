@@ -13,39 +13,34 @@
             data-bs-target="#sidebar" aria-label="Close"></button>
     </div>
     <ul class="metismenu list-unstyled mm-show">
-        <li class="menu-list">
+        <li class="menu-list px-0">
             <a href="{{ route('admin.dashboard') }}">
-                <i class="fas fa-search"></i>
+                {{-- <i class="fas fa-search"></i> --}}
+                <i class="fa-solid fa-table-cells-large"></i>
                 <span>Dashboard</span>
             </a>
         </li>
-        <li class="menu-list">
+        <li class="menu-list px-0">
             <a href="{{ route('branch.index') }}">
-                <i class="fas fa-search"></i>
+                <i class="fa-solid fa-sitemap"></i>
                 <span>Branches</span>
             </a> <!-- Link ke halaman Branch -->
         </li>
-        <li class="menu-list">
+        <li class="menu-list px-0">
             <a href="{{ route('warehouse.index') }}">
-                <i class="fas fa-search"></i>
+                <i class="fa-solid fa-warehouse"></i>
                 <span>Warehouses</span>
             </a>
         </li>
-        <li class="menu-list">
+        <li class="menu-list px-0">
             <a href="{{ route('rack.index') }}">
-                <i class="fas fa-search"></i>
+                <i class="fa-solid fa-boxes-stacked"></i>
                 <span>Racks</span>
             </a>
         </li>
-        <li class="menu-list">
+        <li class="menu-list px-0">
             <a href="{{ route('item.index') }}">
-                <i class="fas fa-search"></i>
-                <span>Items</span>
-            </a>
-        </li>
-        <li class="menu-list">
-            <a href="{{ route('item.index') }}">
-                <i class="fas fa-search"></i>
+                <i class="fa-solid fa-toolbox"></i>
                 <span>Items</span>
             </a>
         </li>

@@ -5,7 +5,8 @@ html, body {
 
 
 body {
-    background-image: url("/images/login-bg.jpg");
+    /* background-image: url("/images/login-bg.jpg"); */
+    background-color: gray;
     display: flex;
     flex-direction: column;
 }
@@ -24,7 +25,12 @@ body {
     flex-direction: column;
     flex: 1;
     min-height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    transition: all 0.35s ease-in-out;
+    background-color: #fafbfe;
 }
+    /* padding-left: 275px; */
 
 main {
     flex: 1;
@@ -76,15 +82,18 @@ main {
     width: 100%;
 }
 
+
+
 /* SIDEBAR */
 
 
 /* FOOTER */
 footer {
-    background-color: #212529;
+    background-color: #8a2432;
     color: white;
     padding: 1rem;
 }
+
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
