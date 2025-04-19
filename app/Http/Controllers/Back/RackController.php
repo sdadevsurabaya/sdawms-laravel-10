@@ -62,4 +62,11 @@ class RackController extends Controller
         $rack->delete();
         return redirect()->route('rack.index')->with('success', 'Rack deleted successfully.');
     }
+
+    public function show($id)
+    {
+        $rack = Rack::with(['warehouse.branch', 'items'])->findOrFail($id);
+
+        return view('back.racks.show', compact('rack'));
+    }
 }
