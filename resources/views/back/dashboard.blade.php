@@ -83,6 +83,11 @@
                     <div class="modal-body">
                         <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
+                        <audio id="audioSuccess">
+                            <source src="{{ asset('audio/scan-success.mp3') }}" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                        </audio>
+
                         <div id="qr-reader" style="width: 100%;">
                         </div>
                         <div id="qr-reader-results">
@@ -94,6 +99,13 @@
                             var scannedCodes = [];
                             let scanCode = '';
                             var countSuccessScan = 0;
+                            var audioSuccess = document.getElementById("audioSuccess");
+
+                            function playAudioSuccess() {
+                                audioSuccess.currentTime = 0;
+                                audioSuccess.play();
+                            }
+
                             var html5QrcodeScanner = new Html5QrcodeScanner(
                                 "qr-reader", {
                                     fps: 10,
@@ -128,6 +140,7 @@
                                 countSuccessScan += 1;
                                 if (scanCode == decodedText) {
                                     if (countSuccessScan == 12) {
+                                        playAudioSuccess();
                                         html5QrcodeScanner.clear();
                                         Swal.fire({
                                             title: decodedText,
@@ -149,6 +162,7 @@
                                                 html5QrcodeScanner.render(onScanSuccess, onScanFailure);
                                             }
                                         });
+                                    } else {
                                     }
                                 } else {
                                     scanCode = decodedText;
