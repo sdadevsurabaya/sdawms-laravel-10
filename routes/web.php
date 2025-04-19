@@ -49,7 +49,7 @@ GUDANG Routes List
 --------------------------------------------*/
 Route::middleware(['auth', 'user.roles:2'])->group(function () {
     Route::get('/gudang/dashboard', function () {
-        return "<h1>DASHBOARD GUDANG</h1>";
+        return view('back.gudang');
     })->name('gudang.dashboard');
 });
 
