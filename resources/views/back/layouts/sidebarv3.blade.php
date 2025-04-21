@@ -55,7 +55,7 @@
                 </div>
                 <li class="item">
                     <a href="{{ route('item.index') }}" class="link flex">
-                        <i class='bx bx-unite' ></i>
+                        <i class='bx bx-unite'></i>
                         <span>Items</span>
                     </a>
                 </li>
@@ -64,6 +64,32 @@
                         <i class="bx bx-cog"></i>
                         <span>Setting</span>
                     </a>
+                </li>
+            </ul>
+
+            <ul class="menu_item">
+                <div class="menu_title flex">
+                    <span class="title">Logout</span>
+                    <span class="line"></span>
+                </div>
+                <li class="item">
+                    <a href="#" onclick="event.preventDefault();btnSubmit();" class="link flex">
+                        <i class='bx bx-log-out'></i>
+                        <span>Logout</span>
+                    </a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                    <script>
+                        function btnSubmit() {
+                            fetch('/refresh-csrf')
+                                .then(response => response.json())
+                                .then(data => {
+                                    document.querySelector('input[name="_token"]').value = data.csrfToken;
+                                    document.getElementById('logout-form').submit();
+                                });
+                        }
+                    </script>
                 </li>
             </ul>
         </div>

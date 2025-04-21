@@ -150,8 +150,8 @@
                                             cancelButtonColor: "#d33",
                                             cancelButtonText: "Tidak",
                                             confirmButtonColor: "#3085d6",
-                                            confirmButtonText: "YA"
-
+                                            confirmButtonText: "YA",
+                                            reverseButtons: true,
                                         }).then((result) => {
                                             if (result.isConfirmed) {
                                                 stopScanning();
