@@ -10,10 +10,17 @@
     <link flex href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/css/custom.css">
     <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/dataTables.bootstrap5.css">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- datatables --}}
+    <script src="/assets/js/dataTables.js"></script>
+    <script src="/assets/js/dataTables.bootstrap5.js"></script>
+
+
 </head>
 
 <body>
@@ -33,7 +40,7 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         // Selecting the sidebar and buttons

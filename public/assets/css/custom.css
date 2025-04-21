@@ -109,3 +109,12 @@ footer {
     }
 }
 
+.active>.page-link, .page-link.active{
+ background-color: #8a2432;
+ border-color: #8a2432;
+}
+
+.page-link{
+    color: black;
+}
+

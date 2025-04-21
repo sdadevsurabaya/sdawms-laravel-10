@@ -162,8 +162,7 @@
                                                 html5QrcodeScanner.render(onScanSuccess, onScanFailure);
                                             }
                                         });
-                                    } else {
-                                    }
+                                    } else {}
                                 } else {
                                     scanCode = decodedText;
                                     countSuccessScan = 1;
@@ -253,40 +252,39 @@
         {{-- Table: Racks and Items --}}
         <div class="card mb-5">
             <div class="card-header bg-dark text-white">Rack Overview by Branch & Warehouse</div>
-            <div class="card-body table-responsive">
+            <div class="card-body">
                 @foreach ($branches as $branch)
                     <h5 class="mt-3 text-primary">{{ $branch->name }}</h5>
                     @foreach ($branch->warehouses as $warehouse)
                         <h6 class="ms-3 text-success">Warehouse: {{ $warehouse->name }}</h6>
-                        <table class="table table-bordered table-sm ms-4">
-                            <thead class="table-secondary">
-                                <tr>
-                                    <th>Rack Name</th>
-                                    <th>Item Count</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($warehouse->racks as $rack)
+                        <div class="table-responsive">
+                            <table id="warehouse" class="table table-bordered">
+                                <thead class="table-secondary">
                                     <tr>
-                                        <td>{{ $rack->rack_number }}</td>
-                                        <td>{{ $rack->items->count() }}</td>
+                                        <th>Rack Name</th>
+                                        <th>Item Count</th>
                                     </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="2" class="text-muted">No racks found.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @forelse ($warehouse->racks as $rack)
+                                        <tr>
+                                            <td>{{ $rack->rack_number }}</td>
+                                            <td>{{ $rack->items->count() }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="2" class="text-muted">No racks found.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     @endforeach
                 @endforeach
             </div>
         </div>
-
-
-
-
-
-
     </div>
+    <script>
+        new DataTable('#warehouse');
+    </script>
 @endsection
