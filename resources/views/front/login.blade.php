@@ -6,7 +6,7 @@
         background-image: url('{{ asset("images/login-bg.jpg") }}');
         background-size: cover;
         background-position: center;
-        min-height: 100vh;
+        /* min-height: 100vh; */
     }
     .login-card {
         background-color: rgba(255, 255, 255, 0.95);
@@ -20,8 +20,10 @@
 
 <div class="d-flex justify-content-center align-items-center vh-100">
     <div class="login-card">
-        <h3 class="text-center mb-4">SDA</h3>
-        <h4 class="text-center mb-4">WMS (WAREHOUSE MANAGEMENT SYSTEMS)</h4>
+        <div class="text-center mb-3">
+            <img src="/images/sda.svg" alt="logo" width="250px">
+        </div>
+        <h4 class="text-center mb-4">WAREHOUSE MANAGEMENT SYSTEMS</h4>
         <form method="POST" action="{{ route('submit.login') }}">
             @csrf
             <div class="mb-3">

@@ -8,7 +8,9 @@
 
     <style>
         body {
-            min-height: 100vh;
+            /* min-height: 100vh; */
+            width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
             background-color: #f8f9fa;
@@ -42,7 +44,7 @@
 
     @include('front.layouts.header')
 
-    <main class="container py-4">
+    <main class="container">
         @yield('content')
     </main>
 
