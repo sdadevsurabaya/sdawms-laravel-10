@@ -13,7 +13,7 @@
                     <table id="item" class="table table-responsive table-bordered">
                         <thead class="table-dark">
                             <tr>
-                                <th>#</th>
+                                <th></th>
                                 <th>Item Name</th>
                                 <th>Rack</th>
                                 <th>QR Code</th>
@@ -31,11 +31,11 @@
                                     <td>{{ $item->barcode }}</td>
                                     <td>
                                         <a href="{{ route('item.edit', $item->id) }}"
-                                            class="btn btn-warning btn-sm">Edit</a>
+                                            class="btn btn-warning btn-sm mb-2"><i class="fa-solid fa-pen-to-square"></i></a>
                                         <form action="{{ route('item.destroy', $item->id) }}" method="POST"
                                             class="d-inline" onsubmit="return confirm('Delete this item?')">
                                             @csrf @method('DELETE')
-                                            <button class="btn btn-danger btn-sm">Del</button>
+                                            <button class="btn btn-danger btn-sm mb-2"><i class="fa-solid fa-trash"></i></button>
                                         </form>
                                     </td>
                                 </tr>
