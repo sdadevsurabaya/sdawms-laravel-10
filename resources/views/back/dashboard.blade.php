@@ -59,7 +59,7 @@
                 </form>
             </div>
             <div class="col-md-4 mb-2">
-                <button type="button" onclick="startScann();" class="btn btn-primary w-100">
+                <button type="button" onclick="startScann();" class="btn btn-primary py-5 py-sm-1 h-100 w-100">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                         class="bi bi-upc-scan" viewBox="0 0 16 16">
                         <path
