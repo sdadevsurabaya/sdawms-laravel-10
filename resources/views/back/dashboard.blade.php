@@ -41,22 +41,30 @@
         {{-- Search Form --}}
         <div class="row mb-4">
             <div class="col-md-4 mb-2">
-                <form method="GET" action="{{ route('admin.dashboard') }}">
+                {{-- <form method="GET" action="{{ route('admin.dashboard') }}">
                     <div class="input-group">
                         <input type="text" name="search_rack" class="form-control" placeholder="Cari kode rack..."
                             value="{{ request('search_rack') }}">
                         <button class="btn btn-warning" type="submit">Cari Rack</button>
                     </div>
+                </form> --}}
+                <form id="searchRackForm" onsubmit="searchRack(event)">
+                    <div class="input-group">
+                        <input type="text" id="searchRackInput" class="form-control" placeholder="Cari kode rack...">
+                        <button class="btn btn-warning" type="submit">Cari Rack</button>
+                    </div>
                 </form>
+
             </div>
             <div class="col-md-4 mb-2">
-                <form method="GET" action="{{ route('admin.dashboard') }}">
+                <form id="searchProductForm" onsubmit="searchProduct(event)">
                     <div class="input-group">
-                        <input type="text" name="search_item" class="form-control" placeholder="Cari nama/kode barang..."
-                            value="{{ request('search_item') }}">
+                        <input type="text" id="searchProductInput" class="form-control"
+                            placeholder="Cari nama/kode barang...">
                         <button class="btn btn-danger" type="submit">Cari Barang</button>
                     </div>
                 </form>
+
             </div>
             <div class="col-md-4 mb-2">
                 <button type="button" onclick="startScann();" class="btn btn-primary w-100">
@@ -198,6 +206,10 @@
             </div>
         </div>
 
+        <div id="rack-api-result" class="mt-3"></div>
+
+        <div id="product-api-result" class="mt-3"></div>
+
         {{-- Rack Result --}}
         @if ($racksWithItems->count())
             <div class="card mb-4 shadow-sm">
@@ -287,4 +299,121 @@
     <script>
         new DataTable('#warehouse');
     </script>
+
+    <script>
+        function searchRack(event) {
+            event.preventDefault();
+            const rackCode = document.getElementById('searchRackInput').value.trim();
+            if (!rackCode) return;
+
+            const resultDiv = document.getElementById('rack-api-result');
+            resultDiv.innerHTML = '<div class="alert alert-info">Memuat data dari API...</div>';
+
+            fetch(`https://bridge.tokosda.com/wms.php?rack_number=${rackCode}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Gagal mengambil data dari server.');
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data || !data.data || data.data.length === 0) {
+                        resultDiv.innerHTML = '<div class="alert alert-warning">Data tidak ditemukan untuk rack: ' +
+                            rackCode + '</div>';
+                        return;
+                    }
+
+                    const rackData = data.data;
+                    let html = `
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <strong>Hasil Pencarian dari API untuk Rack ${data.id}</strong>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group">
+                `;
+
+                    rackData.forEach(item => {
+                        html += `
+                        <li class="list-group-item">
+                            <strong>${item.id_brg}</strong> - ${item.nama_brg} <br>
+                            <small>Merk: ${item.merk}, Qty: ${item.qty} ${item.id_satuan}</small><br>
+                            <small>Keterangan: ${item.keterangan}</small>
+                        </li>
+                    `;
+                    });
+
+                    html += `
+                            </ul>
+                        </div>
+                    </div>
+                `;
+
+                    resultDiv.innerHTML = html;
+                })
+                .catch(err => {
+                    console.error(err);
+                    resultDiv.innerHTML =
+                        '<div class="alert alert-danger">Terjadi kesalahan saat mengambil data.</div>';
+                });
+        }
+    </script>
+
+    <script>
+        function searchProduct(event) {
+            event.preventDefault();
+            const productCode = document.getElementById('searchProductInput').value.trim();
+            if (!productCode) return;
+
+            const resultDiv = document.getElementById('product-api-result');
+            resultDiv.innerHTML = '<div class="alert alert-info">Memuat data dari API...</div>';
+
+            fetch(`https://bridge.tokosda.com/wms.php?product_number=${productCode}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Gagal mengambil data dari server.');
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data || !data.data || data.data.length === 0) {
+                        resultDiv.innerHTML = '<div class="alert alert-warning">Data tidak ditemukan untuk produk: ' +
+                            productCode + '</div>';
+                        return;
+                    }
+
+                    const productData = data.data;
+                    let html = `
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-danger text-white">
+                            <strong>Hasil Pencarian dari API untuk Produk ${data.id}</strong>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group">
+                `;
+
+                    productData.forEach(item => {
+                        html += `
+                        <li class="list-group-item">
+                            <strong>${item.id_brg}</strong> - ${item.nama_brg}<br>
+                            <small>Merk: ${item.merk}, Qty: ${item.qty} ${item.id_satuan}</small><br>
+                            <small>Keterangan: ${item.keterangan}</small><br>
+                            <span class="badge text-bg-dark">Rack: ${item.rack_number}</span>
+                        </li>
+                    `;
+                    });
+
+                    html += `
+                            </ul>
+                        </div>
+                    </div>
+                `;
+
+                    resultDiv.innerHTML = html;
+                })
+                .catch(err => {
+                    console.error(err);
+                    resultDiv.innerHTML =
+                    '<div class="alert alert-danger">Terjadi kesalahan saat mengambil data.</div>';
+                });
+        }
+    </script>
+
+
 @endsection
