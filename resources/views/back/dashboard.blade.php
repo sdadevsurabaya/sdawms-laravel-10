@@ -143,40 +143,112 @@
                             }
 
                             function onScanSuccess(decodedText, decodedResult) {
-                                // console.log(`Code scanned = ${decodedText}`, decodedResult);
-                                // const countResult = document.getElementById("qr-reader-results");
                                 countSuccessScan += 1;
-                                if (scanCode == decodedText) {
-                                    if (countSuccessScan == 12) {
+
+                                if (scanCode === decodedText) {
+                                    if (countSuccessScan === 12) {
                                         playAudioSuccess();
                                         html5QrcodeScanner.clear();
-                                        Swal.fire({
-                                            title: decodedText,
-                                            text: "Apa anda ingin mencari kode rak / barang ini?",
-                                            icon: "warning",
-                                            showCancelButton: true,
-                                            cancelButtonColor: "#d33",
-                                            cancelButtonText: "Tidak",
-                                            confirmButtonColor: "#3085d6",
-                                            confirmButtonText: "YA",
-                                            reverseButtons: true,
-                                        }).then((result) => {
-                                            if (result.isConfirmed) {
-                                                stopScanning();
-                                                window.location.href = "{{ route('admin.dashboard') }}?scancode=" + decodedText;
+                                        $('#scannerModal').modal('hide');
 
-                                            } else {
-                                                countSuccessScan = 0;
-                                                html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-                                            }
-                                        });
-                                    } else {}
+                                        // 🔄 Proses pencarian dari API Rack dulu, lalu Product
+                                        const resultDiv = document.getElementById('rack-api-result');
+                                        const resultProductDiv = document.getElementById('product-api-result');
+
+                                        resultDiv.innerHTML = '<div class="alert alert-info">Memuat data barcode: ' + decodedText + '</div>';
+                                        resultProductDiv.innerHTML = '';
+
+                                        fetch(`https://bridge.tokosda.com/wms.php?rack_number=${decodedText}`)
+                                            .then(res => res.json())
+                                            .then(data => {
+                                                if (data.data && data.data.length > 0) {
+                                                    // Tampilkan hasil sebagai hasil rack
+                                                    const rackData = data.data;
+                                                    let html = `
+                            <div class="card shadow-sm mt-3">
+                                <div class="card-header bg-primary text-white">
+                                    <strong>Barcode Dikenali sebagai Rack: ${data.id}</strong>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-group">
+                        `;
+
+                                                    rackData.forEach(item => {
+                                                        html += `
+                                <li class="list-group-item">
+                                    <strong>${item.id_brg}</strong> - ${item.nama_brg} <br>
+                                    <small>Merk: ${item.merk}, Qty: ${item.qty} ${item.id_satuan}</small><br>
+                                    <small>Keterangan: ${item.keterangan}</small>
+                                </li>
+                            `;
+                                                    });
+
+                                                    html += `
+                                    </ul>
+                                </div>
+                            </div>
+                        `;
+
+                                                    resultDiv.innerHTML = html;
+                                                } else {
+                                                    // Tidak ditemukan di rack, lanjut cek di product
+                                                    fetch(`https://bridge.tokosda.com/wms.php?product_number=${decodedText}`)
+                                                        .then(res => res.json())
+                                                        .then(data => {
+                                                            if (data.data && data.data.length > 0) {
+                                                                const productData = data.data;
+                                                                let html = `
+                                        <div class="card shadow-sm mt-3">
+                                            <div class="card-header bg-danger text-white">
+                                                <strong>Barcode Dikenali sebagai Produk: ${data.id}</strong>
+                                            </div>
+                                            <div class="card-body">
+                                                <ul class="list-group">
+                                    `;
+
+                                                                productData.forEach(item => {
+                                                                    html += `
+                                            <li class="list-group-item">
+                                                <strong>${item.id_brg}</strong> - ${item.nama_brg} <br>
+                                                <small>Merk: ${item.merk}, Qty: ${item.qty} ${item.id_satuan}</small><br>
+                                                <small>Keterangan: ${item.keterangan}</small><br>
+                                                <span class="badge text-bg-dark">Rack: ${item.rack_number}</span>
+                                            </li>
+                                        `;
+                                                                });
+
+                                                                html += `
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    `;
+                                                                resultDiv.innerHTML = '';
+                                                                resultProductDiv.innerHTML = html;
+                                                            } else {
+                                                                // Tidak ditemukan di kedua API
+                                                                resultDiv.innerHTML = '';
+                                                                resultProductDiv.innerHTML = `
+                                        <div class="alert alert-warning mt-3">Barcode tidak dikenali: ${decodedText}</div>
+                                    `;
+                                                            }
+                                                        })
+                                                        .catch(() => {
+                                                            resultProductDiv.innerHTML =
+                                                                `<div class="alert alert-danger mt-3">Gagal memeriksa produk</div>`;
+                                                        });
+                                                }
+                                            })
+                                            .catch(() => {
+                                                resultDiv.innerHTML = `<div class="alert alert-danger mt-3">Gagal memeriksa rack</div>`;
+                                            });
+
+                                    }
                                 } else {
                                     scanCode = decodedText;
                                     countSuccessScan = 1;
                                 }
-                                // countResult.innerHTML = 'jumlah scan: ' + countSuccessScan;
                             }
+
 
                             function onScanFailure(error) {
                                 // handle scan failure, usually better to ignore and keep scanning.
@@ -410,7 +482,7 @@
                 .catch(err => {
                     console.error(err);
                     resultDiv.innerHTML =
-                    '<div class="alert alert-danger">Terjadi kesalahan saat mengambil data.</div>';
+                        '<div class="alert alert-danger">Terjadi kesalahan saat mengambil data.</div>';
                 });
         }
     </script>
