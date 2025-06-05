@@ -15,7 +15,7 @@
                     <table id="warehouse" class="table table-bordered">
                         <thead class="table-dark">
                             <tr>
-                                <th>#</th>
+                                <th></th>
                                 <th>Warehouse Name</th>
                                 <th>Address</th>
                                 <th>Branch</th>
@@ -31,11 +31,11 @@
                                     <td>{{ $warehouse->branch->name }}</td>
                                     <td>
                                         <a href="{{ route('warehouse.edit', $warehouse->id) }}"
-                                            class="btn btn-warning btn-sm">Edit</a>
+                                            class="btn btn-warning btn-sm mb-2"> <i class="fa-solid fa-pen-to-square"></i></a>
                                         <form action="{{ route('warehouse.destroy', $warehouse->id) }}" method="POST"
                                             class="d-inline" onsubmit="return confirm('Delete this warehouse?')">
                                             @csrf @method('DELETE')
-                                            <button class="btn btn-danger btn-sm">Del</button>
+                                            <button class="btn btn-danger btn-sm mb-2"><i class="fa-solid fa-trash"></i></button>
                                         </form>
                                     </td>
                                 </tr>

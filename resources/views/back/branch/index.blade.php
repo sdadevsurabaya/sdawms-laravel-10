@@ -15,7 +15,7 @@
                     <table id="branch" class="table table-bordered">
                         <thead class="table-dark">
                             <tr>
-                                <th>#</th>
+                                <th></th>
                                 <th>Branch Name</th>
                                 <th>Address</th>
                                 <th>Phone</th>
@@ -31,11 +31,11 @@
                                     <td>{{ $branch->phone }}</td>
                                     <td>
                                         <a href="{{ route('branch.edit', $branch->id) }}"
-                                            class="btn btn-warning btn-sm">Edit</a>
+                                            class="btn btn-warning btn-sm mb-2"><i class="fa-solid fa-pen-to-square"></i></a>
                                         <form action="{{ route('branch.destroy', $branch->id) }}" method="POST"
                                             class="d-inline" onsubmit="return confirm('Delete this branch?')">
                                             @csrf @method('DELETE')
-                                            <button class="btn btn-danger btn-sm">Del</button>
+                                            <button class="btn btn-danger btn-sm mb-2"><i class="fa-solid fa-trash"></i></button>
                                         </form>
                                     </td>
                                 </tr>
