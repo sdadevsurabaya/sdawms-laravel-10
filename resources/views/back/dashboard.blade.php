@@ -4,7 +4,7 @@
     <div class="container mt-4">
         {{-- Summary Cards --}}
         <div class="row g-3 mb-4">
-            <div class="col-md-3 col-6">
+            {{-- <div class="col-md-3 col-6">
                 <div class="card text-bg-primary text-center">
                     <div class="card-body">
                         <h5 class="card-title">Branches</h5>
@@ -19,20 +19,20 @@
                         <h2>{{ $warehouseCount }}</h2>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3 col-6">
+            </div> --}}
+            <div class="col-6">
                 <div class="card text-bg-warning text-center">
                     <div class="card-body">
                         <h5 class="card-title">Racks</h5>
-                        <h2>{{ $rackCount }}</h2>
+                        <h2 id="rack_count">0</h2>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 col-6">
+            <div class="col-6">
                 <div class="card text-bg-danger text-center">
                     <div class="card-body">
                         <h5 class="card-title">Items</h5>
-                        <h2>{{ $itemCount }}</h2>
+                        <h2 id="items_count">0</h2>
                     </div>
                 </div>
             </div>
@@ -165,29 +165,29 @@
                                                     // Tampilkan hasil sebagai hasil rack
                                                     const rackData = data.data;
                                                     let html = `
-                            <div class="card shadow-sm mt-3">
-                                <div class="card-header bg-primary text-white">
-                                    <strong>Barcode Dikenali sebagai Rack: ${data.id}</strong>
-                                </div>
-                                <div class="card-body">
-                                    <ul class="list-group">
-                        `;
+                                                        <div class="card shadow-sm mt-3">
+                                                            <div class="card-header bg-primary text-white">
+                                                                <strong>Barcode Dikenali sebagai Rack: ${data.id}</strong>
+                                                            </div>
+                                                            <div class="card-body">
+                                                                <ul class="list-group">
+                                                    `;
 
-                                                    rackData.forEach(item => {
-                                                        html += `
-                                <li class="list-group-item">
-                                    <strong>${item.id_brg}</strong> - ${item.nama_brg} <br>
-                                    <small>Merk: ${item.merk}, Qty: ${item.qty} ${item.id_satuan}</small><br>
-                                    <small>Keterangan: ${item.keterangan}</small>
-                                </li>
-                            `;
-                                                    });
+                                                                                rackData.forEach(item => {
+                                                                                    html += `
+                                                            <li class="list-group-item">
+                                                                <strong>${item.id_brg}</strong> - ${item.nama_brg} <br>
+                                                                <small>Merk: ${item.merk}, Qty: ${item.qty} ${item.id_satuan}</small><br>
+                                                                <small>Keterangan: ${item.keterangan}</small>
+                                                            </li>
+                                                        `;
+                                                                                });
 
-                                                    html += `
-                                    </ul>
-                                </div>
-                            </div>
-                        `;
+                                                                                html += `
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    `;
 
                                                     resultDiv.innerHTML = html;
                                                 } else {
@@ -198,30 +198,30 @@
                                                             if (data.data && data.data.length > 0) {
                                                                 const productData = data.data;
                                                                 let html = `
-                                        <div class="card shadow-sm mt-3">
-                                            <div class="card-header bg-danger text-white">
-                                                <strong>Barcode Dikenali sebagai Produk: ${data.id}</strong>
-                                            </div>
-                                            <div class="card-body">
-                                                <ul class="list-group">
-                                    `;
+                                                                <div class="card shadow-sm mt-3">
+                                                                    <div class="card-header bg-danger text-white">
+                                                                        <strong>Barcode Dikenali sebagai Produk: ${data.id}</strong>
+                                                                    </div>
+                                                                    <div class="card-body">
+                                                                        <ul class="list-group">
+                                                            `;
 
-                                                                productData.forEach(item => {
-                                                                    html += `
-                                            <li class="list-group-item">
-                                                <strong>${item.id_brg}</strong> - ${item.nama_brg} <br>
-                                                <small>Merk: ${item.merk}, Qty: ${item.qty} ${item.id_satuan}</small><br>
-                                                <small>Keterangan: ${item.keterangan}</small><br>
-                                                <span class="badge text-bg-dark">Rack: ${item.rack_number}</span>
-                                            </li>
-                                        `;
-                                                                });
+                                                                                        productData.forEach(item => {
+                                                                                            html += `
+                                                                    <li class="list-group-item">
+                                                                        <strong>${item.id_brg}</strong> - ${item.nama_brg} <br>
+                                                                        <small>Merk: ${item.merk}, Qty: ${item.qty} ${item.id_satuan}</small><br>
+                                                                        <small>Keterangan: ${item.keterangan}</small><br>
+                                                                        <span class="badge text-bg-dark">Rack: ${item.rack_number}</span>
+                                                                    </li>
+                                                                `;
+                                                                                        });
 
-                                                                html += `
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    `;
+                                                                                        html += `
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                            `;
                                                                 resultDiv.innerHTML = '';
                                                                 resultProductDiv.innerHTML = html;
                                                             } else {
@@ -337,6 +337,65 @@
         <div class="card mb-5">
             <div class="card-header bg-dark text-white">Rack Overview by Branch & Warehouse</div>
             <div class="card-body">
+                {{-- @foreach ($branches as $branch) --}}
+                {{-- <h5 class="mt-3 text-primary">{{ $branch->name }}</h5> --}}
+                {{-- @foreach ($branch->warehouses as $warehouse) --}}
+                {{-- <h6 class="ms-3 text-success">Warehouse: {{ $warehouse->name }}</h6> --}}
+                <div class="table-responsive">
+                    <table id="warehouse" class="table table-bordered">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th>Rack Number</th>
+                                <th>Total Items</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="modal fade" id="itemDetailModal" tabindex="-1" aria-labelledby="itemDetailModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="itemDetailModalLabel">Items in Rack: <span
+                                        id="modalRackNumber"></span></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <table id="modalItemsTable" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Barcode</th>
+                                            <th>Item ID</th>
+                                            <th>Item Name</th>
+                                            <th>Brand</th>
+                                            <th>Qty</th>
+                                            <th>Unit</th>
+                                            <th>Notes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- @endforeach --}}
+                {{-- @endforeach --}}
+            </div>
+        </div>
+        {{-- <div class="card mb-5">
+            <div class="card-header bg-dark text-white">Rack Overview by Branch & Warehouse</div>
+            <div class="card-body">
                 @foreach ($branches as $branch)
                     <h5 class="mt-3 text-primary">{{ $branch->name }}</h5>
                     @foreach ($branch->warehouses as $warehouse)
@@ -366,10 +425,131 @@
                     @endforeach
                 @endforeach
             </div>
-        </div>
+        </div> --}}
     </div>
     <script>
-        new DataTable('#warehouse');
+        /**
+         * Mengambil dan menampilkan data ringkasan (jumlah rak dan total item)
+         * dari API ke elemen HTML yang ditentukan.
+         */
+        function loadSummaryData() {
+            const API_SUMMARY_URL = `https://bridge.tokosda.com/wms.php`; // API tanpa parameter apapun untuk ringkasan
+
+            fetch(API_SUMMARY_URL)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(apiResponse => {
+                    if (apiResponse.data && typeof apiResponse.data.rack_count !== 'undefined' && typeof apiResponse
+                        .data.total_items !== 'undefined') {
+                        $('#rack_count').text(apiResponse.data.rack_count);
+                        $('#items_count').text(apiResponse.data.total_items);
+                    } else {
+                        console.error("Data summary from API is not in the expected format:", apiResponse);
+                        $('#rack_count').text('N/A');
+                        $('#items_count').text('N/A');
+                        alert("Failed to load summary data. API response format is incorrect.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching summary data:", error);
+                    $('#rack_count').text('Error');
+                    $('#items_count').text('Error');
+                    alert("Error loading summary data: " + error.message);
+                });
+        }
+
+        /**
+         * Menginisialisasi DataTable dan memuat semua data rak yang dikelompokkan
+         * dari API, lalu menambahkan fungsionalitas untuk melihat detail item.
+         */
+        function initializeWarehouseDataTable() {
+            const dataTable = $('#warehouse').DataTable({
+                columns: [{
+                        data: 'rack_number'
+                    },
+                    {
+                        data: 'item_count'
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            return `<button class="btn btn-info btn-sm view-detail">View Items</button>`;
+                        },
+                        orderable: false
+                    }
+                ],
+                processing: true,
+                paging: true,
+                searching: true,
+                ordering: true,
+                info: true
+            });
+
+            fetch(`https://bridge.tokosda.com/wms.php?all_grouped_by_rack=true`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(apiResponse => {
+                    if (apiResponse.data && Array.isArray(apiResponse.data)) {
+                        const processedData = apiResponse.data.map(rack => ({
+                            rack_number: rack.rack_number,
+                            item_count: rack.item ? rack.item.length : 0,
+                            full_items: rack.item || []
+                        }));
+                        dataTable.clear().rows.add(processedData).draw();
+                    } else {
+                        console.error("Data returned from API is not in the expected format:", apiResponse);
+                        alert("Failed to load data. API response format is incorrect.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                    alert("Error loading warehouse data: " + error.message);
+                });
+
+            // Event Listener untuk Tombol View Items
+            $('#warehouse tbody').on('click', '.view-detail', function() {
+                const rowData = dataTable.row($(this).parents('tr')).data();
+
+                if (rowData && rowData.full_items && rowData.full_items.length > 0) {
+                    $('#modalRackNumber').text(rowData.rack_number);
+                    $('#modalItemsTable tbody').empty();
+
+                    rowData.full_items.forEach(item => {
+                        $('#modalItemsTable tbody').append(`
+                    <tr>
+                        <td>${item.barcode || ''}</td>
+                        <td>${item.id_brg || ''}</td>
+                        <td>${item.nama_brg || ''}</td>
+                        <td>${item.merk || ''}</td>
+                        <td>${item.qty || ''}</td>
+                        <td>${item.id_satuan || ''}</td>
+                        <td>${item.keterangan || ''}</td>
+                    </tr>
+                `);
+                    });
+
+                    // Pastikan Bootstrap JS dimuat untuk modal ini
+                    const itemDetailModal = new bootstrap.Modal(document.getElementById('itemDetailModal'));
+                    itemDetailModal.show();
+
+                } else {
+                    alert(`No detailed items found for Rack: ${rowData.rack_number}`);
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            loadSummaryData(); // Memuat data ringkasan
+            initializeWarehouseDataTable(); // Menginisialisasi dan memuat data tabel
+        });
     </script>
 
     <script>

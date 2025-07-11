@@ -14,8 +14,8 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $branchCount = Branch::count();
-        $warehouseCount = Warehouse::count();
+        // $branchCount = Branch::count();
+        // $warehouseCount = Warehouse::count();
         $rackCount = Rack::count();
         $itemCount = Item::count();
 
