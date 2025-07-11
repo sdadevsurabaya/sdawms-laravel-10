@@ -112,10 +112,10 @@
                 </span>
                 <div class="data_text">
                     @auth
-                        @if ((int) Auth::user()->role_id === 1)
+                        {{-- @if ((int) Auth::user()->role_id === 1) --}}
                             <span class="name">{{ Auth::user()->name }}</span>
                             <span class="email">{{ Auth::user()->email }}</span>
-                        @endif
+                        {{-- @endif --}}
                     @endauth
                 </div>
             </div>

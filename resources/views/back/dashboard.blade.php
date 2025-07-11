@@ -538,7 +538,105 @@
             </div>
         </div> --}}
     </div>
+    <style>
+        /* Styling untuk Overlay Loading */
+        .loading-overlay {
+            position: fixed;
+            /* Tetap di viewport saat scrolling */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            /* Semi-transparan hitam */
+            display: flex;
+            /* Menggunakan flexbox untuk memusatkan spinner */
+            justify-content: center;
+            /* Pusatkan horizontal */
+            align-items: center;
+            /* Pusatkan vertikal */
+            z-index: 9999;
+            /* Pastikan di atas elemen lain */
+            transition: opacity 0.3s ease-in-out;
+            /* Animasi saat muncul/hilang */
+            opacity: 0;
+            /* Awalnya tersembunyi */
+            visibility: hidden;
+            /* Awalnya tidak terlihat */
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            /* Tampilkan overlay */
+            visibility: visible;
+            /* Jadikan terlihat */
+        }
+
+        /* Styling untuk Spinner */
+        .loading-spinner {
+            border: 6px solid #f3f3f3;
+            /* Light grey */
+            border-top: 6px solid #3498db;
+            /* Biru */
+            border-radius: 50%;
+            /* Membuat bentuk lingkaran */
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            /* Animasi berputar */
+        }
+
+        /* Keyframes untuk Animasi Spin */
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Styling untuk Teks Loading */
+        .loading-text {
+            color: #fff;
+            /* Warna teks putih */
+            margin-left: 15px;
+            /* Jarak antara spinner dan teks */
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    </style>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Memuat...</div>
+    </div>
     <script>
+        function showLoadingOverlay(message = "Memuat...") {
+            const overlay = document.getElementById('loadingOverlay');
+            const text = overlay.querySelector('.loading-text');
+            text.textContent = message; // Atur pesan loading
+
+            // Tambahkan kelas 'active' untuk menampilkan overlay dengan transisi
+            overlay.classList.add('active');
+        }
+
+        /**
+         * Menyembunyikan overlay loading.
+         */
+        function hideLoadingOverlay() {
+            const overlay = document.getElementById('loadingOverlay');
+            // Hapus kelas 'active' untuk menyembunyikan overlay dengan transisi
+            overlay.classList.remove('active');
+
+            // Opsional: Tunggu transisi selesai sebelum mengatur visibility: hidden
+            // Ini memastikan transisi selesai sebelum elemen tidak bisa lagi diklik (jika ada)
+            setTimeout(() => {
+                if (!overlay.classList.contains('active')) { // Pastikan tidak diaktifkan lagi selama timeout
+                    overlay.style.visibility = 'hidden';
+                }
+            }, 300); // Sesuaikan dengan durasi transisi CSS (0.3s = 300ms)
+        }
         /**
          * Mengambil dan menampilkan data ringkasan (jumlah rak dan total item)
          * dari API ke elemen HTML yang ditentukan.
@@ -572,6 +670,9 @@
                     // alert("Error loading summary data: " + error.message);
                 });
         }
+
+        // Tampilkan overlay loading sebelum fetch data
+        showLoadingOverlay("Memuat data gudang...");
 
         /**
          * Menginisialisasi DataTable dan memuat semua data rak yang dikelompokkan
@@ -623,6 +724,9 @@
                 .catch(error => {
                     console.error("Error fetching data:", error);
                     // alert("Error loading warehouse data: " + error.message);
+                })
+                .finally(() => {
+                    hideLoadingOverlay(); // Sembunyikan overlay setelah fetch selesai (berhasil/gagal)
                 });
 
             // Event Listener untuk Tombol View Items
