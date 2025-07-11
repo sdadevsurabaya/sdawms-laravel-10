@@ -562,14 +562,14 @@
                         console.error("Data summary from API is not in the expected format:", apiResponse);
                         $('#rack_count').text('N/A');
                         $('#items_count').text('N/A');
-                        alert("Failed to load summary data. API response format is incorrect.");
+                        // alert("Failed to load summary data. API response format is incorrect.");
                     }
                 })
                 .catch(error => {
                     console.error("Error fetching summary data:", error);
                     $('#rack_count').text('Error');
                     $('#items_count').text('Error');
-                    alert("Error loading summary data: " + error.message);
+                    // alert("Error loading summary data: " + error.message);
                 });
         }
 
@@ -617,12 +617,12 @@
                         dataTable.clear().rows.add(processedData).draw();
                     } else {
                         console.error("Data returned from API is not in the expected format:", apiResponse);
-                        alert("Failed to load data. API response format is incorrect.");
+                        // alert("Failed to load data. API response format is incorrect.");
                     }
                 })
                 .catch(error => {
                     console.error("Error fetching data:", error);
-                    alert("Error loading warehouse data: " + error.message);
+                    // alert("Error loading warehouse data: " + error.message);
                 });
 
             // Event Listener untuk Tombol View Items
@@ -652,7 +652,7 @@
                     itemDetailModal.show();
 
                 } else {
-                    alert(`No detailed items found for Rack: ${rowData.rack_number}`);
+                    // alert(`No detailed items found for Rack: ${rowData.rack_number}`);
                 }
             });
         }

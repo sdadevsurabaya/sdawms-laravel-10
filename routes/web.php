@@ -48,9 +48,7 @@ GUDANG Routes List
 --------------------------------------------
 --------------------------------------------*/
 Route::middleware(['auth', 'user.roles:2'])->group(function () {
-    Route::get('/gudang/dashboard', function () {
-        return view('back.gudang');
-    })->name('gudang.dashboard');
+    Route::get('/gudang/dashboard', [DashboardController::class, 'index'])->name('gudang.dashboard');
 });
 
 

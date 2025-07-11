@@ -16,92 +16,108 @@
                     <span class="line"></span>
                 </div>
                 <li class="item">
-                    <a href="{{ route('admin.dashboard') }}" class="link flex">
-                        <i class='bx bxs-dashboard'></i>
-                        <span>Overview</span>
-                    </a>
-                </li>
-            </ul>
+                    @auth
+                        @if ((int) Auth::user()->role_id === 1)
+                            <a href="{{ route('admin.dashboard') }}" class="link flex">
+                                <i class='bx bxs-dashboard'></i>
+                                <span>Dashboard</span>
+                            </a>
+                        @else
+                            <a href="{{ route('gudang.dashboard') }}" class="link flex">
+                                <i class='bx bxs-dashboard'></i>
+                                <span>Dashboard</span>
+                            </a>
+                        @endif
+                        @endauth
+                    </li>
+                </ul>
+                {{-- @dump(Auth::user()) --}}
+                @auth
+                    @if ((int) Auth::user()->role_id === 1)
+                        <ul class="menu_item">
+                            <div class="menu_title flex">
+                                <span class="title">Location</span>
+                                <span class="line"></span>
+                            </div>
+                            <li class="item">
+                                <a href="{{ route('branch.index') }}" class="link flex">
+                                    <i class='bx bx-vector'></i>
+                                    <span>Branch</span>
+                                </a>
+                            </li>
+                            <li class="item">
+                                <a href="{{ route('warehouse.index') }}" class="link flex">
+                                    <i class='bx bx-home-circle'></i>
+                                    <span>Warehouse</span>
+                                </a>
+                            </li>
+                            <li class="item">
+                                <a href="{{ route('rack.index') }}" class="link flex">
+                                    <i class='bx bxs-server'></i>
+                                    <span>Rack</span>
+                                </a>
+                            </li>
+                        </ul>
 
-            <ul class="menu_item">
-                <div class="menu_title flex">
-                    <span class="title">Location</span>
-                    <span class="line"></span>
+                        <ul class="menu_item">
+                            <div class="menu_title flex">
+                                <span class="title">Item</span>
+                                <span class="line"></span>
+                            </div>
+                            <li class="item">
+                                <a href="{{ route('item.index') }}" class="link flex">
+                                    <i class='bx bx-unite'></i>
+                                    <span>Items</span>
+                                </a>
+                            </li>
+                            <li class="item">
+                                <a href="#" class="link flex">
+                                    <i class="bx bx-cog"></i>
+                                    <span>Setting</span>
+                                </a>
+                            </li>
+                        </ul>
+                    @endif
+                @endauth
+                <ul class="menu_item">
+                    <div class="menu_title flex">
+                        <span class="title">Logout</span>
+                        <span class="line"></span>
+                    </div>
+                    <li class="item">
+                        <a href="#" onclick="event.preventDefault();btnSubmit();" class="link flex">
+                            <i class='bx bx-log-out'></i>
+                            <span>Logout</span>
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                        <script>
+                            function btnSubmit() {
+                                fetch('/refresh-csrf')
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        document.querySelector('input[name="_token"]').value = data.csrfToken;
+                                        document.getElementById('logout-form').submit();
+                                    });
+                            }
+                        </script>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="sidebar_profile flex">
+                <span class="nav_image">
+                    <img src="/images/300-15.jpg" alt="logo_img" />
+                </span>
+                <div class="data_text">
+                    @auth
+                        @if ((int) Auth::user()->role_id === 1)
+                            <span class="name">{{ Auth::user()->name }}</span>
+                            <span class="email">{{ Auth::user()->email }}</span>
+                        @endif
+                    @endauth
                 </div>
-                <li class="item">
-                    <a href="{{ route('branch.index') }}" class="link flex">
-                        <i class='bx bx-vector'></i>
-                        <span>Branch</span>
-                    </a>
-                </li>
-                <li class="item">
-                    <a href="{{ route('warehouse.index') }}" class="link flex">
-                        <i class='bx bx-home-circle'></i>
-                        <span>Warehouse</span>
-                    </a>
-                </li>
-                <li class="item">
-                    <a href="{{ route('rack.index') }}" class="link flex">
-                        <i class='bx bxs-server'></i>
-                        <span>Rack</span>
-                    </a>
-                </li>
-            </ul>
-
-            <ul class="menu_item">
-                <div class="menu_title flex">
-                    <span class="title">Item</span>
-                    <span class="line"></span>
-                </div>
-                <li class="item">
-                    <a href="{{ route('item.index') }}" class="link flex">
-                        <i class='bx bx-unite'></i>
-                        <span>Items</span>
-                    </a>
-                </li>
-                <li class="item">
-                    <a href="#" class="link flex">
-                        <i class="bx bx-cog"></i>
-                        <span>Setting</span>
-                    </a>
-                </li>
-            </ul>
-
-            <ul class="menu_item">
-                <div class="menu_title flex">
-                    <span class="title">Logout</span>
-                    <span class="line"></span>
-                </div>
-                <li class="item">
-                    <a href="#" onclick="event.preventDefault();btnSubmit();" class="link flex">
-                        <i class='bx bx-log-out'></i>
-                        <span>Logout</span>
-                    </a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                        @csrf
-                    </form>
-                    <script>
-                        function btnSubmit() {
-                            fetch('/refresh-csrf')
-                                .then(response => response.json())
-                                .then(data => {
-                                    document.querySelector('input[name="_token"]').value = data.csrfToken;
-                                    document.getElementById('logout-form').submit();
-                                });
-                        }
-                    </script>
-                </li>
-            </ul>
-        </div>
-
-        <div class="sidebar_profile flex">
-            <span class="nav_image">
-                <img src="/images/300-15.jpg" alt="logo_img" />
-            </span>
-            <div class="data_text">
-                <span class="name">David Oliva</span>
-                <span class="email">david@gmail.com</span>
             </div>
         </div>
-    </div>
-</nav>
+    </nav>
