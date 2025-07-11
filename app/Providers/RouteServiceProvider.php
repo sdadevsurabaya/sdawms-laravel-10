@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Providers;
 
 use Illuminate\Cache\RateLimiting\Limit;
@@ -17,7 +16,17 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    public const HOME = '/admin/dashboard';
+    // public const HOME = '/admin/dashboard';
+    public static function getHomeRoute()
+    {
+        $user = auth()->user();
+
+        if ($user && (int) $user->role_id === 1) {
+            return '/admin/dashboard';
+        }
+
+        return '/gudang/dashboard'; // Default for non-admin roles
+    }
 
     /**
      * Define your route model bindings, pattern filters, and other route configuration.
