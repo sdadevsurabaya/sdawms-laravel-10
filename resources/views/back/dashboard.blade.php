@@ -143,109 +143,169 @@
                             }
 
                             function onScanSuccess(decodedText, decodedResult) {
-                                countSuccessScan += 1;
+                                countSuccessScan = (scanCode === decodedText) ? countSuccessScan + 1 : 1;
+                                scanCode = decodedText;
 
-                                if (scanCode === decodedText) {
-                                    if (countSuccessScan === 12) {
-                                        playAudioSuccess();
-                                        html5QrcodeScanner.clear();
-                                        $('#scannerModal').modal('hide');
+                                if (countSuccessScan === 12) {
+                                    playAudioSuccess();
+                                    html5QrcodeScanner.clear();
+                                    $('#scannerModal').modal('hide');
 
-                                        // 🔄 Proses pencarian dari API Rack dulu, lalu Product
-                                        const resultDiv = document.getElementById('rack-api-result');
-                                        const resultProductDiv = document.getElementById('product-api-result');
-
-                                        resultDiv.innerHTML = '<div class="alert alert-info">Memuat data barcode: ' + decodedText + '</div>';
-                                        resultProductDiv.innerHTML = '';
-
-                                        fetch(`https://bridge.tokosda.com/wms.php?rack_number=${decodedText}`)
-                                            .then(res => res.json())
-                                            .then(data => {
-                                                if (data.data && data.data.length > 0) {
-                                                    // Tampilkan hasil sebagai hasil rack
-                                                    const rackData = data.data;
-                                                    let html = `
-                                                        <div class="card shadow-sm mt-3">
-                                                            <div class="card-header bg-primary text-white">
-                                                                <strong>Barcode Dikenali sebagai Rack: ${data.id}</strong>
-                                                            </div>
-                                                            <div class="card-body">
-                                                                <ul class="list-group">
-                                                    `;
-
-                                                                                rackData.forEach(item => {
-                                                                                    html += `
-                                                            <li class="list-group-item">
-                                                                <strong>${item.id_brg}</strong> - ${item.nama_brg} <br>
-                                                                <small>Merk: ${item.merk}, Qty: ${item.qty} ${item.id_satuan}</small><br>
-                                                                <small>Keterangan: ${item.keterangan}</small>
-                                                            </li>
-                                                        `;
-                                                                                });
-
-                                                                                html += `
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    `;
-
-                                                    resultDiv.innerHTML = html;
-                                                } else {
-                                                    // Tidak ditemukan di rack, lanjut cek di product
-                                                    fetch(`https://bridge.tokosda.com/wms.php?product_number=${decodedText}`)
-                                                        .then(res => res.json())
-                                                        .then(data => {
-                                                            if (data.data && data.data.length > 0) {
-                                                                const productData = data.data;
-                                                                let html = `
-                                                                <div class="card shadow-sm mt-3">
-                                                                    <div class="card-header bg-danger text-white">
-                                                                        <strong>Barcode Dikenali sebagai Produk: ${data.id}</strong>
-                                                                    </div>
-                                                                    <div class="card-body">
-                                                                        <ul class="list-group">
-                                                            `;
-
-                                                                                        productData.forEach(item => {
-                                                                                            html += `
-                                                                    <li class="list-group-item">
-                                                                        <strong>${item.id_brg}</strong> - ${item.nama_brg} <br>
-                                                                        <small>Merk: ${item.merk}, Qty: ${item.qty} ${item.id_satuan}</small><br>
-                                                                        <small>Keterangan: ${item.keterangan}</small><br>
-                                                                        <span class="badge text-bg-dark">Rack: ${item.rack_number}</span>
-                                                                    </li>
-                                                                `;
-                                                                                        });
-
-                                                                                        html += `
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                            `;
-                                                                resultDiv.innerHTML = '';
-                                                                resultProductDiv.innerHTML = html;
-                                                            } else {
-                                                                // Tidak ditemukan di kedua API
-                                                                resultDiv.innerHTML = '';
-                                                                resultProductDiv.innerHTML = `
-                                        <div class="alert alert-warning mt-3">Barcode tidak dikenali: ${decodedText}</div>
-                                    `;
-                                                            }
-                                                        })
-                                                        .catch(() => {
-                                                            resultProductDiv.innerHTML =
-                                                                `<div class="alert alert-danger mt-3">Gagal memeriksa produk</div>`;
-                                                        });
+                                    // Process Rack API first, then Product
+                                    const endpoints = [{
+                                            id: 'rack-api-result',
+                                            titleId: 'rackResultTitle',
+                                            tableId: '#rackDataTable',
+                                            url: `https://bridge.tokosda.com/wms.php?rack_number=${decodedText}`,
+                                            columns: [{
+                                                    data: 'barcode',
+                                                    defaultContent: ''
+                                                },
+                                                {
+                                                    data: 'id_brg',
+                                                    defaultContent: ''
+                                                },
+                                                {
+                                                    data: 'nama_brg',
+                                                    defaultContent: ''
+                                                },
+                                                {
+                                                    data: 'merk',
+                                                    defaultContent: ''
+                                                },
+                                                {
+                                                    data: 'qty',
+                                                    defaultContent: ''
+                                                },
+                                                {
+                                                    data: 'id_satuan',
+                                                    defaultContent: ''
+                                                },
+                                                {
+                                                    data: 'keterangan',
+                                                    defaultContent: ''
                                                 }
-                                            })
-                                            .catch(() => {
-                                                resultDiv.innerHTML = `<div class="alert alert-danger mt-3">Gagal memeriksa rack</div>`;
+                                            ]
+                                        },
+                                        {
+                                            id: 'product-api-result',
+                                            titleId: 'productResultTitle',
+                                            tableId: '#productDataTable',
+                                            url: `https://bridge.tokosda.com/wms.php?product_number=${decodedText}`,
+                                            columns: [{
+                                                    data: 'rack_number',
+                                                    defaultContent: ''
+                                                },
+                                                {
+                                                    data: 'barcode',
+                                                    defaultContent: ''
+                                                },
+                                                {
+                                                    data: 'id_brg',
+                                                    defaultContent: ''
+                                                },
+                                                {
+                                                    data: 'nama_brg',
+                                                    defaultContent: ''
+                                                },
+                                                {
+                                                    data: 'merk',
+                                                    defaultContent: ''
+                                                },
+                                                {
+                                                    data: 'qty',
+                                                    defaultContent: ''
+                                                },
+                                                {
+                                                    data: 'id_satuan',
+                                                    defaultContent: ''
+                                                },
+                                                {
+                                                    data: 'keterangan',
+                                                    defaultContent: ''
+                                                }
+                                            ]
+                                        }
+                                    ];
+
+                                    async function fetchAndDisplay(endpoint) {
+                                        const resultDiv = document.getElementById(endpoint.id);
+                                        const cardElement = resultDiv.querySelector('.card');
+                                        if (cardElement) cardElement.style.display = 'none';
+                                        resultDiv.innerHTML = `<div class="alert alert-info">Memuat data barcode: ${decodedText}</div>`;
+                                        resultDiv.style.display = 'block';
+
+                                        try {
+                                            const response = await fetch(endpoint.url);
+                                            if (!response.ok) throw new Error('Gagal mengambil data dari server.');
+                                            const data = await response.json();
+
+                                            if (!data?.data?.length) {
+                                                resultDiv.innerHTML =
+                                                    `<div class="alert alert-warning">Data tidak ditemukan untuk ${endpoint.id.includes('rack') ? 'rack' : 'produk'}: ${decodedText}</div>`;
+                                                return false;
+                                            }
+
+                                            resultDiv.innerHTML = cardElement ? '' : `
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-${endpoint.id.includes('rack') ? 'primary' : 'danger'} text-white">
+                            <strong>Hasil Pencarian untuk ${endpoint.id.includes('rack') ? 'Rack' : 'Produk'}: <span id="${endpoint.titleId}"></span></strong>
+                        </div>
+                        <div class="card-body">
+                            <table id="${endpoint.tableId.slice(1)}" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        ${endpoint.id.includes('rack') ? '' : '<th>Rack Number</th>'}
+                                        <th>Barcode</th>
+                                        <th>Item ID</th>
+                                        <th>Item Name</th>
+                                        <th>Brand</th>
+                                        <th>Qty</th>
+                                        <th>Unit</th>
+                                        <th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>`;
+
+                                            if (cardElement) resultDiv.appendChild(cardElement);
+                                            const titleSpan = resultDiv.querySelector(`#${endpoint.titleId}`);
+                                            if (titleSpan) titleSpan.textContent = data.id;
+
+                                            const tableInstance = endpoint.id.includes('rack') ? rackDataTableInstance :
+                                                productDataTableInstance;
+                                            if (tableInstance) tableInstance.destroy();
+
+                                            const newInstance = $(endpoint.tableId).DataTable({
+                                                data: data.data,
+                                                columns: endpoint.columns,
+                                                destroy: true,
+                                                paging: true,
+                                                searching: true,
+                                                ordering: true,
+                                                info: true,
+                                                responsive: true
                                             });
 
+                                            if (endpoint.id.includes('rack')) rackDataTableInstance = newInstance;
+                                            else productDataTableInstance = newInstance;
+
+                                            if (cardElement) cardElement.style.display = 'block';
+                                            resultDiv.style.display = 'block';
+                                            return true;
+                                        } catch (err) {
+                                            console.error(err);
+                                            resultDiv.innerHTML = `<div class="alert alert-danger">Terjadi kesalahan: ${err.message}</div>`;
+                                            return false;
+                                        }
                                     }
-                                } else {
-                                    scanCode = decodedText;
-                                    countSuccessScan = 1;
+
+                                    (async () => {
+                                        const rackSuccess = await fetchAndDisplay(endpoints[0]);
+                                        if (!rackSuccess) await fetchAndDisplay(endpoints[1]);
+                                    })();
                                 }
                             }
 
@@ -278,9 +338,60 @@
             </div>
         </div>
 
-        <div id="rack-api-result" class="mt-3"></div>
+        {{-- <div id="rack-api-result" class="mt-3"></div>
 
-        <div id="product-api-result" class="mt-3"></div>
+        <div id="product-api-result" class="mt-3"></div> --}}
+
+        <div id="rack-api-result" class="my-3" style="display: none;">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <strong>Hasil Pencarian untuk Rack: <span id="rackResultTitle"></span></strong>
+                </div>
+                <div class="card-body table-responsive">
+                    <table id="rackDataTable" class="table table-bordered table-striped text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>Barcode</th>
+                                <th>Item ID</th>
+                                <th>Item Name</th>
+                                <th>Brand</th>
+                                <th>Qty</th>
+                                <th>Unit</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="product-api-result" class="my-3" style="display: none;">
+            <div class="card shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <strong>Hasil Pencarian untuk Product: <span id="productResultTitle"></span></strong>
+                </div>
+                <div class="card-body table-responsive">
+                    <table id="productDataTable" class="table table-bordered table-striped text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>Rack Number</th>
+                                <th>Barcode</th>
+                                <th>Item ID</th>
+                                <th>Item Name</th>
+                                <th>Brand</th>
+                                <th>Qty</th>
+                                <th>Unit</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
         {{-- Rack Result --}}
         @if ($racksWithItems->count())
@@ -365,8 +476,8 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <div class="modal-body">
-                                <table id="modalItemsTable" class="table table-bordered table-striped">
+                            <div class="modal-body table-responsive">
+                                <table id="modalItemsTable" class="table table-bordered table-striped text-nowrap">
                                     <thead>
                                         <tr>
                                             <th>Barcode</th>
@@ -553,13 +664,28 @@
     </script>
 
     <script>
+        // Deklarasikan variabel global untuk DataTables agar bisa diakses
+        let rackDataTableInstance = null;
+        let productDataTableInstance = null;
+
+        // Pastikan DataTables dan jQuery sudah dimuat sebelum script ini
+
         function searchRack(event) {
             event.preventDefault();
             const rackCode = document.getElementById('searchRackInput').value.trim();
             if (!rackCode) return;
 
             const resultDiv = document.getElementById('rack-api-result');
+            const resultTitleSpan = document.getElementById('rackResultTitle');
+            const tableId = '#rackDataTable';
+            const cardElement = resultDiv.querySelector('.card'); // Ambil elemen card
+
+            // Sembunyikan card hasil dan tampilkan loading
+            if (cardElement) {
+                cardElement.style.display = 'none'; // Sembunyikan card utamanya
+            }
             resultDiv.innerHTML = '<div class="alert alert-info">Memuat data dari API...</div>';
+            resultDiv.style.display = 'block'; // Pastikan container resultDiv terlihat untuk pesan loading
 
             fetch(`https://bridge.tokosda.com/wms.php?rack_number=${rackCode}`)
                 .then(response => {
@@ -567,56 +693,140 @@
                     return response.json();
                 })
                 .then(data => {
+                    // Hapus pesan loading
+                    resultDiv.innerHTML = '';
+
                     if (!data || !data.data || data.data.length === 0) {
                         resultDiv.innerHTML = '<div class="alert alert-warning">Data tidak ditemukan untuk rack: ' +
                             rackCode + '</div>';
+                        resultDiv.style.display = 'block'; // Tampilkan resultDiv untuk pesan "tidak ditemukan"
                         return;
                     }
 
-                    const rackData = data.data;
-                    let html = `
+                    // Pindahkan kembali struktur card ke dalam resultDiv
+                    if (!cardElement) { // Ini seharusnya tidak terjadi jika HTML sudah benar, tapi sebagai fallback
+                        resultDiv.innerHTML = `
                     <div class="card shadow-sm">
                         <div class="card-header bg-primary text-white">
-                            <strong>Hasil Pencarian dari API untuk Rack ${data.id}</strong>
+                            <strong>Hasil Pencarian untuk Rack: <span id="rackResultTitle"></span></strong>
                         </div>
                         <div class="card-body">
-                            <ul class="list-group">
-                `;
-
-                    rackData.forEach(item => {
-                        html += `
-                        <li class="list-group-item">
-                            <strong>${item.id_brg}</strong> - ${item.nama_brg} <br>
-                            <small>Merk: ${item.merk}, Qty: ${item.qty} ${item.id_satuan}</small><br>
-                            <small>Keterangan: ${item.keterangan}</small>
-                        </li>
-                    `;
-                    });
-
-                    html += `
-                            </ul>
+                            <table id="rackDataTable" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Barcode</th>
+                                        <th>Item ID</th>
+                                        <th>Item Name</th>
+                                        <th>Brand</th>
+                                        <th>Qty</th>
+                                        <th>Unit</th>
+                                        <th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
                         </div>
                     </div>
                 `;
+                        // Perbarui referensi ke cardElement dan resultTitleSpan setelah innerHTML diubah
+                        // Ini penting jika struktur card direbuild
+                        // Ini bisa dihindari jika struktur card memang tidak pernah dihapus dengan innerHTML = ''
+                        // Untuk kesederhanaan, kita asumsikan cardElement sudah ada dari awal.
+                        // Jika ingin lebih aman, bisa refetch elemen atau simpan reference ke template string
+                    } else {
+                        resultDiv.appendChild(cardElement); // Tambahkan card element yang disembunyikan kembali
+                    }
 
-                    resultDiv.innerHTML = html;
+
+                    // Tampilkan kartu hasil dan judul
+                    // resultTitleSpan perlu direferensikan ulang jika DOM di dalam resultDiv diubah secara massal.
+                    // Atau, lebih baik, targetkan langsung elemen span di dalam cardElement
+                    const currentRackResultTitleSpan = resultDiv.querySelector('#rackResultTitle');
+                    if (currentRackResultTitleSpan) {
+                        currentRackResultTitleSpan.textContent = data.id;
+                    } else {
+                        // Fallback jika tidak ditemukan (misal: struktur card di HTML awal tidak ada span itu)
+                        console.warn('rackResultTitle span not found in the re-rendered card.');
+                    }
+
+
+                    // Hancurkan instance DataTables yang ada jika sudah ada
+                    if (rackDataTableInstance) {
+                        rackDataTableInstance.destroy();
+                        // DataTables.destroy() juga membersihkan tbody secara default
+                    }
+
+                    // Inisialisasi DataTables
+                    rackDataTableInstance = $(tableId).DataTable({
+                        data: data.data, // Data dari API
+                        columns: [{
+                                data: 'barcode',
+                                defaultContent: ''
+                            },
+                            {
+                                data: 'id_brg',
+                                defaultContent: ''
+                            },
+                            {
+                                data: 'nama_brg',
+                                defaultContent: ''
+                            },
+                            {
+                                data: 'merk',
+                                defaultContent: ''
+                            },
+                            {
+                                data: 'qty',
+                                defaultContent: ''
+                            },
+                            {
+                                data: 'id_satuan',
+                                defaultContent: ''
+                            },
+                            {
+                                data: 'keterangan',
+                                defaultContent: ''
+                            }
+                        ],
+                        destroy: true, // Izinkan DataTables untuk diinisialisasi ulang
+                        paging: true,
+                        searching: true,
+                        ordering: true,
+                        info: true,
+                        responsive: true
+                    });
+
+                    // Tampilkan card utama setelah DataTables dimuat
+                    if (cardElement) {
+                        cardElement.style.display = 'block';
+                    }
+                    resultDiv.style.display = 'block'; // Pastikan resultDiv (container card) juga terlihat
+
                 })
                 .catch(err => {
                     console.error(err);
-                    resultDiv.innerHTML =
-                        '<div class="alert alert-danger">Terjadi kesalahan saat mengambil data.</div>';
+                    resultDiv.innerHTML = '<div class="alert alert-danger">Terjadi kesalahan saat mengambil data: ' +
+                        err.message + '</div>';
+                    resultDiv.style.display = 'block';
                 });
         }
-    </script>
 
-    <script>
         function searchProduct(event) {
             event.preventDefault();
             const productCode = document.getElementById('searchProductInput').value.trim();
             if (!productCode) return;
 
             const resultDiv = document.getElementById('product-api-result');
+            const resultTitleSpan = document.getElementById('productResultTitle');
+            const tableId = '#productDataTable';
+            const cardElement = resultDiv.querySelector('.card'); // Ambil elemen card
+
+            // Sembunyikan card hasil dan tampilkan loading
+            if (cardElement) {
+                cardElement.style.display = 'none'; // Sembunyikan card utamanya
+            }
             resultDiv.innerHTML = '<div class="alert alert-info">Memuat data dari API...</div>';
+            resultDiv.style.display = 'block'; // Pastikan container resultDiv terlihat untuk pesan loading
 
             fetch(`https://bridge.tokosda.com/wms.php?product_number=${productCode}`)
                 .then(response => {
@@ -624,45 +834,115 @@
                     return response.json();
                 })
                 .then(data => {
+                    // Hapus pesan loading
+                    resultDiv.innerHTML = '';
+
                     if (!data || !data.data || data.data.length === 0) {
                         resultDiv.innerHTML = '<div class="alert alert-warning">Data tidak ditemukan untuk produk: ' +
                             productCode + '</div>';
+                        resultDiv.style.display = 'block'; // Tampilkan resultDiv untuk pesan "tidak ditemukan"
                         return;
                     }
 
-                    const productData = data.data;
-                    let html = `
+                    // Pindahkan kembali struktur card ke dalam resultDiv
+                    if (!cardElement) {
+                        resultDiv.innerHTML = `
                     <div class="card shadow-sm">
                         <div class="card-header bg-danger text-white">
-                            <strong>Hasil Pencarian dari API untuk Produk ${data.id}</strong>
+                            <strong>Hasil Pencarian untuk Produk: <span id="productResultTitle"></span></strong>
                         </div>
                         <div class="card-body">
-                            <ul class="list-group">
-                `;
-
-                    productData.forEach(item => {
-                        html += `
-                        <li class="list-group-item">
-                            <strong>${item.id_brg}</strong> - ${item.nama_brg}<br>
-                            <small>Merk: ${item.merk}, Qty: ${item.qty} ${item.id_satuan}</small><br>
-                            <small>Keterangan: ${item.keterangan}</small><br>
-                            <span class="badge text-bg-dark">Rack: ${item.rack_number}</span>
-                        </li>
-                    `;
-                    });
-
-                    html += `
-                            </ul>
+                            <table id="productDataTable" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Rack Number</th>
+                                        <th>Barcode</th>
+                                        <th>Item ID</th>
+                                        <th>Item Name</th>
+                                        <th>Brand</th>
+                                        <th>Qty</th>
+                                        <th>Unit</th>
+                                        <th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
                         </div>
                     </div>
                 `;
+                    } else {
+                        resultDiv.appendChild(cardElement);
+                    }
 
-                    resultDiv.innerHTML = html;
+                    // resultTitleSpan perlu direferensikan ulang jika DOM di dalam resultDiv diubah secara massal.
+                    const currentProductResultTitleSpan = resultDiv.querySelector('#productResultTitle');
+                    if (currentProductResultTitleSpan) {
+                        currentProductResultTitleSpan.textContent = data.id;
+                    } else {
+                        console.warn('productResultTitle span not found in the re-rendered card.');
+                    }
+
+                    // Hancurkan instance DataTables yang ada jika sudah ada
+                    if (productDataTableInstance) {
+                        productDataTableInstance.destroy();
+                    }
+
+                    // Inisialisasi DataTables
+                    productDataTableInstance = $(tableId).DataTable({
+                        data: data.data, // Data dari API
+                        columns: [{
+                                data: 'rack_number',
+                                defaultContent: ''
+                            },
+                            {
+                                data: 'barcode',
+                                defaultContent: ''
+                            },
+                            {
+                                data: 'id_brg',
+                                defaultContent: ''
+                            },
+                            {
+                                data: 'nama_brg',
+                                defaultContent: ''
+                            },
+                            {
+                                data: 'merk',
+                                defaultContent: ''
+                            },
+                            {
+                                data: 'qty',
+                                defaultContent: ''
+                            },
+                            {
+                                data: 'id_satuan',
+                                defaultContent: ''
+                            },
+                            {
+                                data: 'keterangan',
+                                defaultContent: ''
+                            }
+                        ],
+                        destroy: true,
+                        paging: true,
+                        searching: true,
+                        ordering: true,
+                        info: true,
+                        responsive: true
+                    });
+
+                    // Tampilkan card utama setelah DataTables dimuat
+                    if (cardElement) {
+                        cardElement.style.display = 'block';
+                    }
+                    resultDiv.style.display = 'block'; // Pastikan resultDiv (container card) juga terlihat
+
                 })
                 .catch(err => {
                     console.error(err);
-                    resultDiv.innerHTML =
-                        '<div class="alert alert-danger">Terjadi kesalahan saat mengambil data.</div>';
+                    resultDiv.innerHTML = '<div class="alert alert-danger">Terjadi kesalahan saat mengambil data: ' +
+                        err.message + '</div>';
+                    resultDiv.style.display = 'block';
                 });
         }
     </script>
