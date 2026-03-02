@@ -12,6 +12,7 @@ use App\Http\Controllers\Back\RackController;
 use App\Http\Controllers\Back\ItemController;
 use App\Http\Controllers\Back\ScanController;
 use App\Http\Controllers\Back\UserController;
+use App\Http\Controllers\Back\WmsApiController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -42,6 +43,8 @@ ADMIN Routes List
 Route::middleware(['auth', 'user.roles:1'])->group(function () {
     Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
     Route::resource('users', UserController::class)->except(['show']);
+    Route::post('users/{user}/login-as',        [UserController::class, 'loginAs'])->name('users.login-as');
+    Route::post('users/leave-impersonation',    [UserController::class, 'leaveImpersonation'])->name('users.leave-impersonation');
 });
 
 
@@ -60,6 +63,14 @@ Route::middleware(['auth', 'user.roles:2'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/back/scan-qr', [ScanController::class, 'index'])->name('scan.qr');
+
+    // WMS API Proxy — realtime, tanpa cache
+    Route::prefix('api/wms')->name('api.wms.')->group(function () {
+        Route::get('/summary',          [WmsApiController::class, 'summary'])->name('summary');
+        Route::get('/racks',            [WmsApiController::class, 'allRacks'])->name('racks');
+        Route::get('/rack/{code}',      [WmsApiController::class, 'byRack'])->name('rack');
+        Route::get('/product/{code}',   [WmsApiController::class, 'byProduct'])->name('product');
+    });
 });
 
 Route::prefix('back')->group(function () {

@@ -1,3 +1,18 @@
+@if (session('impersonator_id'))
+    <div class="impersonation-banner d-flex align-items-center justify-content-between px-3 py-1">
+        <span>
+            <i class="bx bx-transfer-alt me-1"></i>
+            Anda sedang login sebagai <strong>{{ Auth::user()->name }}</strong>
+        </span>
+        <form action="{{ route('users.leave-impersonation') }}" method="POST" class="m-0">
+            @csrf
+            <button type="submit" class="btn btn-sm btn-light fw-semibold">
+                <i class="bx bx-arrow-back me-1"></i>Kembali ke Admin
+            </button>
+        </form>
+    </div>
+@endif
+
 <div class="navtop-bar d-flex align-items-center justify-content-between px-3 py-2">
 
     {{-- Kiri: tombol toggle sidebar --}}

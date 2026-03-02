@@ -59,6 +59,17 @@
                                             <i class="bx bx-edit"></i>
                                         </a>
                                         @if ($user->id !== auth()->id())
+                                            {{-- Login As --}}
+                                            <form action="{{ route('users.login-as', $user->id) }}" method="POST"
+                                                class="d-inline"
+                                                onsubmit="return confirm('Login sebagai {{ $user->name }}?')">
+                                                @csrf
+                                                <button class="btn btn-info btn-sm"
+                                                    title="Login sebagai {{ $user->name }}">
+                                                    <i class="bx bx-log-in-circle"></i>
+                                                </button>
+                                            </form>
+                                            {{-- Hapus --}}
                                             <form action="{{ route('users.destroy', $user->id) }}" method="POST"
                                                 class="d-inline"
                                                 onsubmit="return confirm('Hapus user {{ $user->name }}?')">

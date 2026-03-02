@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Back;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -77,5 +78,41 @@ class UserController extends Controller
 
         $user->delete();
         return redirect()->route('users.index')->with('success', 'User berhasil dihapus.');
+    }
+
+    /**
+     * Admin masuk sebagai user lain (impersonation).
+     */
+    public function loginAs(User $user)
+    {
+        if ($user->id === auth()->id()) {
+            return redirect()->route('users.index')->with('error', 'Tidak dapat login sebagai diri sendiri.');
+        }
+
+        // Simpan ID admin asli di session
+        session(['impersonator_id' => auth()->id()]);
+
+        Auth::loginUsingId($user->id);
+
+        // Arahkan ke dashboard sesuai role target
+        $dashboard = (int) $user->role_id === 1 ? 'admin.dashboard' : 'gudang.dashboard';
+        return redirect()->route($dashboard)->with('info', 'Anda sekarang login sebagai ' . $user->name . '.');
+    }
+
+    /**
+     * Kembali ke akun admin asal setelah impersonation.
+     */
+    public function leaveImpersonation()
+    {
+        $adminId = session('impersonator_id');
+
+        if (! $adminId) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        session()->forget('impersonator_id');
+        Auth::loginUsingId($adminId);
+
+        return redirect()->route('users.index')->with('success', 'Anda telah kembali ke akun admin.');
     }
 }

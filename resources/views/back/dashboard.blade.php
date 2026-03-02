@@ -156,7 +156,7 @@
                                             id: 'rack-api-result',
                                             titleId: 'rackResultTitle',
                                             tableId: '#rackDataTable',
-                                            url: `https://bridge.tokosda.com/wms.php?rack_number=${decodedText}`,
+                                            url: `/api/wms/rack/${decodedText}`,
                                             columns: [{
                                                     data: 'barcode',
                                                     defaultContent: ''
@@ -191,7 +191,7 @@
                                             id: 'product-api-result',
                                             titleId: 'productResultTitle',
                                             tableId: '#productDataTable',
-                                            url: `https://bridge.tokosda.com/wms.php?product_number=${decodedText}`,
+                                            url: `/api/wms/product/${decodedText}`,
                                             columns: [{
                                                     data: 'rack_number',
                                                     defaultContent: ''
@@ -644,7 +644,7 @@
         function loadSummaryData() {
             const API_SUMMARY_URL = `https://bridge.tokosda.com/wms.php`; // API tanpa parameter apapun untuk ringkasan
 
-            fetch(API_SUMMARY_URL)
+            fetch('/api/wms/summary')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
@@ -701,7 +701,7 @@
                 info: true
             });
 
-            fetch(`https://bridge.tokosda.com/wms.php?all_grouped_by_rack=true`)
+            fetch('/api/wms/racks')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
@@ -791,7 +791,7 @@
             resultDiv.innerHTML = '<div class="alert alert-info">Memuat data dari API...</div>';
             resultDiv.style.display = 'block'; // Pastikan container resultDiv terlihat untuk pesan loading
 
-            fetch(`https://bridge.tokosda.com/wms.php?rack_number=${rackCode}`)
+            fetch(`/api/wms/rack/${rackCode}`)
                 .then(response => {
                     if (!response.ok) throw new Error('Gagal mengambil data dari server.');
                     return response.json();
@@ -932,7 +932,7 @@
             resultDiv.innerHTML = '<div class="alert alert-info">Memuat data dari API...</div>';
             resultDiv.style.display = 'block'; // Pastikan container resultDiv terlihat untuk pesan loading
 
-            fetch(`https://bridge.tokosda.com/wms.php?product_number=${productCode}`)
+            fetch(`/api/wms/product/${productCode}`)
                 .then(response => {
                     if (!response.ok) throw new Error('Gagal mengambil data dari server.');
                     return response.json();
