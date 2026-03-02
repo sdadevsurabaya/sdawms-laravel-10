@@ -10,6 +10,7 @@ use App\Http\Controllers\Back\BranchController;
 use App\Http\Controllers\Back\WarehouseController;
 use App\Http\Controllers\Back\RackController;
 use App\Http\Controllers\Back\ItemController;
+use App\Http\Controllers\Back\ScanController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -27,7 +28,7 @@ Route::get('/', [FrontHomeController::class, 'index']);
 
 Route::get('/login', [FrontHomeController::class, 'index'])->name('front.login');
 Route::post('/login', [FrontHomeController::class, 'login'])->name('submit.login');
-Route::post('/logout',[FrontHomeController::class, 'logout'])->name('logout');
+Route::post('/logout', [FrontHomeController::class, 'logout'])->name('logout');
 Route::get('/refresh-csrf', function () {
     return response()->json(['csrfToken' => csrf_token()]);
 });
@@ -54,6 +55,10 @@ Route::middleware(['auth', 'user.roles:2'])->group(function () {
 
 
 
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/back/scan-qr', [ScanController::class, 'index'])->name('scan.qr');
+});
 
 Route::prefix('back')->group(function () {
     Route::resource('branch', BranchController::class);
