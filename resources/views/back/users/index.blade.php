@@ -34,6 +34,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Nama</th>
+                                <th>Username</th>
                                 <th>Email</th>
                                 <th>Role</th>
                                 <th>Dibuat</th>
@@ -45,6 +46,7 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $user->name }}</td>
+                                    <td><code>{{ $user->username }}</code></td>
                                     <td>{{ $user->email }}</td>
                                     <td>
                                         @if ((int) $user->role_id === 1)

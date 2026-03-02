@@ -21,14 +21,12 @@ class FrontHomeController extends Controller
 
     public function login(Request $request)
     {
-        $input = $request->all();
-
         $this->validate($request, [
-            'email' => 'required|email',
+            'username' => 'required|string',
             'password' => 'required',
         ]);
 
-        if (auth()->attempt(array('email' => $input['email'], 'password' => $input['password']))) {
+        if (auth()->attempt(['username' => $request->username, 'password' => $request->password])) {
             if (auth()->user()->role_id == 1) {
                 return redirect()->route('admin.dashboard');
             } else if (auth()->user()->role_id == 2) {
@@ -36,7 +34,7 @@ class FrontHomeController extends Controller
             }
         } else {
             return redirect()->route('front.login')
-                ->with('error', 'Email-Address And Password Are Wrong.');
+                ->with('error', 'Username atau Password salah.');
         }
     }
 

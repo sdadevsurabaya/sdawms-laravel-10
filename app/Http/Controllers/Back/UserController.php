@@ -25,6 +25,7 @@ class UserController extends Controller
     {
         $request->validate([
             'name'     => 'required|string|max:255',
+            'username' => 'required|string|max:50|alpha_dash|unique:users,username',
             'email'    => 'required|email|unique:users,email',
             'role_id'  => 'required|in:1,2',
             'password' => 'required|string|min:8|confirmed',
@@ -32,6 +33,7 @@ class UserController extends Controller
 
         User::create([
             'name'     => $request->name,
+            'username' => strtolower($request->username),
             'email'    => $request->email,
             'role_id'  => $request->role_id,
             'password' => Hash::make($request->password),
@@ -48,16 +50,18 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $request->validate([
-            'name'    => 'required|string|max:255',
-            'email'   => 'required|email|unique:users,email,' . $user->id,
-            'role_id' => 'required|in:1,2',
+            'name'     => 'required|string|max:255',
+            'username' => 'required|string|max:50|alpha_dash|unique:users,username,' . $user->id,
+            'email'    => 'required|email|unique:users,email,' . $user->id,
+            'role_id'  => 'required|in:1,2',
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 
         $data = [
-            'name'    => $request->name,
-            'email'   => $request->email,
-            'role_id' => $request->role_id,
+            'name'     => $request->name,
+            'username' => strtolower($request->username),
+            'email'    => $request->email,
+            'role_id'  => $request->role_id,
         ];
 
         if ($request->filled('password')) {
