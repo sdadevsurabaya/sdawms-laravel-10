@@ -70,10 +70,23 @@
                                 <span>Items</span>
                             </a>
                         </li>
-                        <li class="item">
+                        {{-- <li class="item">
                             <a href="#" class="link flex">
                                 <i class="bx bx-cog"></i>
                                 <span>Setting</span>
+                            </a>
+                        </li> --}}
+                    </ul>
+
+                    <ul class="menu_item">
+                        <div class="menu_title flex">
+                            <span class="title">Akun</span>
+                            <span class="line"></span>
+                        </div>
+                        <li class="item">
+                            <a href="{{ route('users.index') }}" class="link flex">
+                                <i class='bx bx-group'></i>
+                                <span>Manajemen User</span>
                             </a>
                         </li>
                     </ul>
@@ -115,21 +128,6 @@
                         }
                     </script>
                 </li>
-            </ul>
-        </div>
-
-        <div class="sidebar_profile flex">
-            <span class="nav_image">
-                <img src="/images/300-15.jpg" alt="logo_img" />
-            </span>
-            <div class="data_text">
-                @auth
-                    {{-- @if ((int) Auth::user()->role_id === 1) --}}
-                    <span class="name">{{ Auth::user()->name }}</span>
-                    <span class="email">{{ Auth::user()->email }}</span>
-                    {{-- @endif --}}
-                @endauth
-            </div>
         </div>
     </div>
 </nav>

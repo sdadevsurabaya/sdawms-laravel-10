@@ -11,6 +11,7 @@ use App\Http\Controllers\Back\WarehouseController;
 use App\Http\Controllers\Back\RackController;
 use App\Http\Controllers\Back\ItemController;
 use App\Http\Controllers\Back\ScanController;
+use App\Http\Controllers\Back\UserController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -40,6 +41,7 @@ ADMIN Routes List
 --------------------------------------------*/
 Route::middleware(['auth', 'user.roles:1'])->group(function () {
     Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::resource('users', UserController::class)->except(['show']);
 });
 
 

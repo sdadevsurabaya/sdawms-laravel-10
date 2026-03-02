@@ -151,41 +151,31 @@ body {
   color: #333;
 }
 
-/* Navbar */
-.navbar {
-  max-width: 500px;
-  width: 100%;
-  position: fixed;
+/* Navbar / Top Bar */
+.navtop-bar {
+  position: sticky;
   top: 0;
-  left: 60%;
-  transform: translateX(-50%);
+  z-index: 100;
   background: #fff;
-  padding: 10px 20px;
-  border-radius: 0 0 8px 8px;
-  justify-content: space-between;
+  border-bottom: 1px solid rgba(0,0,0,.08);
+  min-height: 56px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
 }
-#sidebar-open {
-  font-size: 30px;
-  color: #333;
-  cursor: pointer;
-  margin-right: 20px;
-  display: none;
+.nav-toggle-btn {
+  color: #555;
+  transition: color .2s;
 }
-.search_box {
-  height: 46px;
-  max-width: 500px;
-  width: 100%;
-  border: 1px solid #aaa;
-  outline: none;
-  border-radius: 8px;
-  padding: 0 15px;
-  font-size: 18px;
-  color: #333;
+.nav-toggle-btn:hover {
+  color: #8a2432;
 }
-.navbar img {
-  height: 40px;
-  width: 40px;
-  margin-left: 20px;
+.nav-profile-btn {
+  background: transparent;
+  border: 1px solid rgba(0,0,0,.1);
+  transition: background .2s, border-color .2s;
+}
+.nav-profile-btn:hover {
+  background: #f5f5f5;
+  border-color: rgba(0,0,0,.18);
 }
 
 /* Responsive */
