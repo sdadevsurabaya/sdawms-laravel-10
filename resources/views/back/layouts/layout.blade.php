@@ -174,8 +174,53 @@
         });
     </script>
 
-    {{-- ========= PWA Service Worker ========= --}}
+    {{-- ========= PWA: Install Handler + Service Worker ========= --}}
     <script>
+        let _pwaPrompt = null;
+        const pwaBtn = document.getElementById('pwa-install-btn');
+
+        // Jika sudah running sebagai standalone app → sembunyikan tombol
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+            if (pwaBtn) pwaBtn.classList.add('d-none');
+        }
+
+        // Tangkap event beforeinstallprompt SETIAP KALI muncul → simpan
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            _pwaPrompt = e;
+            if (pwaBtn) {
+                pwaBtn.classList.remove('d-none');
+                pwaBtn.classList.add('d-flex');
+            }
+        });
+
+        // Klik tombol → panggil ulang prompt
+        if (pwaBtn) {
+            pwaBtn.addEventListener('click', async () => {
+                if (!_pwaPrompt) {
+                    // Prompt sudah dipakai / tidak tersedia
+                    alert('Gunakan menu browser (Add to Home Screen / Install) untuk menginstall app ini.');
+                    return;
+                }
+                _pwaPrompt.prompt();
+                const {
+                    outcome
+                } = await _pwaPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    pwaBtn.classList.add('d-none');
+                    _pwaPrompt = null;
+                }
+                // Jika ditolak: tombol TETAP MUNCUL → user bisa coba lagi
+            });
+        }
+
+        // Setelah berhasil diinstall → sembunyikan tombol
+        window.addEventListener('appinstalled', () => {
+            if (pwaBtn) pwaBtn.classList.add('d-none');
+            _pwaPrompt = null;
+        });
+
+        // Register Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js').catch(() => {});

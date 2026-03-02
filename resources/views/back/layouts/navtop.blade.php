@@ -20,6 +20,13 @@
         <i class="bx bx-menu fs-4 nav-toggle-btn" id="sidebar-open" style="cursor:pointer;"></i>
     </div>
 
+    {{-- Tengah: Install PWA button (muncul jika bisa diinstall) --}}
+    <button id="pwa-install-btn" class="btn btn-sm d-none align-items-center gap-1 pwa-install-btn"
+        title="Install sebagai App">
+        <i class="bx bx-download"></i>
+        <span class="d-none d-sm-inline">Install App</span>
+    </button>
+
     {{-- Kanan: profil user + dropdown --}}
     @auth
         <div class="dropdown">

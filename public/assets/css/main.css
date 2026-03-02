@@ -197,6 +197,22 @@ body {
   background: #fff;
 }
 
+/* PWA Install Button */
+.pwa-install-btn {
+  border: 1.5px solid #8a2432;
+  color: #8a2432;
+  font-size: .8rem;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 4px 10px;
+  transition: background .2s, color .2s;
+}
+
+.pwa-install-btn:hover {
+  background: #8a2432;
+  color: #fff;
+}
+
 /* Navbar / Top Bar */
 .navtop-bar {
   position: sticky;
