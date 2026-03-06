@@ -21,44 +21,80 @@
                             </div>
                         </div>
 
-                        {{-- ② Panduan penggunaan --}}
-                        <div class="border rounded p-3 mb-3 text-start bg-light">
-                            <p class="fw-semibold mb-2">
-                                <i class="bx bx-info-circle text-primary me-1"></i>Cara Penggunaan
-                            </p>
-                            <p class="small fw-semibold text-muted mb-1">
-                                <i class="bx bx-barcode-reader me-1 text-secondary"></i>Menggunakan Alat Scanner:
-                            </p>
-                            <ol class="mb-3 ps-3 small text-secondary">
-                                <li>Arahkan alat scanner ke <strong>QR Code</strong> pada struk pembelian.</li>
-                                <li>Hasil scan otomatis masuk ke kolom input di bawah.</li>
-                                <li>Tekan <kbd>Enter</kbd> atau tombol <strong>OK</strong> untuk memproses.</li>
-                            </ol>
-                            <p class="small fw-semibold text-muted mb-1">
-                                <i class="bx bx-camera me-1 text-secondary"></i>Menggunakan Kamera:
-                            </p>
-                            <ol class="mb-0 ps-3 small text-secondary">
-                                <li>Tekan tombol <strong>"Scan via Kamera"</strong> di bawah.</li>
-                                <li>Arahkan kamera ke <strong>QR Code</strong> yang ada di struk pembelian.</li>
-                                <li>Tahan kamera hingga QR Code terbaca otomatis.</li>
-                            </ol>
+                        {{-- Tombol Toggle Panduan (UI Improved) --}}
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small fw-bold text-muted uppercase">Metode Pemindaian</span>
+                            <button
+                                class="btn btn-light btn-sm rounded-pill px-3 border shadow-sm d-flex align-items-center gap-2 toggle-guide-btn"
+                                type="button" data-bs-toggle="collapse" data-bs-target="#guide-warning-section"
+                                aria-expanded="false" aria-controls="guide-warning-section">
+                                <i class="bx bx-help-circle text-primary fs-6"></i>
+                                <span class="small fw-bold">Petunjuk Penggunaan</span>
+                                <i class="bx bx-chevron-down transition-icon" id="guide-chevron"></i>
+                            </button>
                         </div>
 
-                        {{-- ③ Catatan / warning --}}
-                        <div class="alert alert-info d-flex align-items-start gap-2 py-2 text-start mb-3" role="alert">
-                            <i class="bx bx-shield-quarter fs-5 flex-shrink-0 mt-1"></i>
-                            <small>
-                                <strong>Catatan:</strong>
-                                Untuk fitur kamera, pastikan Anda sudah <strong>mengizinkan akses kamera</strong> di
-                                browser.
-                                Untuk alat scanner, pastikan perangkat sudah <strong>terhubung ke komputer</strong>
-                                (USB/Bluetooth).
-                            </small>
+                        <style>
+                            .toggle-guide-btn {
+                                transition: all 0.2s ease;
+                                background: #f8f9fa;
+                            }
+
+                            .toggle-guide-btn:hover {
+                                background: #e9ecef;
+                                transform: translateY(-1px);
+                                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05) !important;
+                            }
+
+                            .transition-icon {
+                                transition: transform 0.3s ease;
+                            }
+
+                            .toggle-guide-btn[aria-expanded="true"] .transition-icon {
+                                transform: rotate(180deg);
+                            }
+                        </style>
+
+                        {{-- Bungkus Guide & Warning agar bisa di-collapse --}}
+                        <div id="guide-warning-section" class="collapse">
+                            {{-- ② Panduan penggunaan --}}
+                            <div class="border rounded p-3 mb-3 text-start bg-light">
+                                <p class="fw-semibold mb-2 text-primary">
+                                    <i class="bx bx-help-circle me-1"></i>Cara Penggunaan
+                                </p>
+                                <p class="small fw-semibold text-muted mb-1">
+                                    <i class="bx bx-barcode-reader me-1 text-secondary"></i>Menggunakan Alat Scanner:
+                                </p>
+                                <ol class="mb-3 ps-3 small text-secondary">
+                                    <li>Arahkan alat scanner ke <strong>QR Code</strong> pada struk pembelian.</li>
+                                    <li>Hasil scan otomatis masuk ke kolom input di bawah.</li>
+                                    <li>Tekan <kbd>Enter</kbd> atau tombol <strong>OK</strong> untuk memproses.</li>
+                                </ol>
+                                <p class="small fw-semibold text-muted mb-1">
+                                    <i class="bx bx-camera me-1 text-secondary"></i>Menggunakan Kamera:
+                                </p>
+                                <ol class="mb-0 ps-3 small text-secondary">
+                                    <li>Tekan tombol <strong>"Scan via Kamera"</strong> di bawah.</li>
+                                    <li>Arahkan kamera ke <strong>QR Code</strong> yang ada di struk pembelian.</li>
+                                    <li>Tahan kamera hingga QR Code terbaca otomatis.</li>
+                                </ol>
+                            </div>
+
+                            {{-- ③ Catatan / warning --}}
+                            <div class="alert alert-info d-flex align-items-start gap-2 py-2 text-start mb-3"
+                                role="alert">
+                                <i class="bx bx-shield-quarter fs-5 flex-shrink-0 mt-1"></i>
+                                <small>
+                                    <strong>Catatan:</strong>
+                                    Untuk fitur kamera, pastikan izin akses kamera sudah diberikan di browser.
+                                    Untuk alat scanner, pastikan perangkat terhubung via USB/Bluetooth.
+                                </small>
+                            </div>
                         </div>
 
                         {{-- ④ INPUT ALAT SCANNER —— selalu terlihat, auto-focus --}}
                         <div class="mb-3">
-                            <label class="form-label small fw-semibold text-muted mb-1" for="scan-input">
+                            <label class="form-label small fw-semibold text-muted mb-2" for="scan-input">
                                 <i class="bx bx-barcode-reader me-1"></i>Input Alat Scanner / Ketik Manual
                             </label>
                             <div class="input-group">
@@ -70,14 +106,21 @@
                                     <i class="bx bx-check me-1"></i>OK
                                 </button>
                             </div>
-                            <div class="text-muted mt-1" style="font-size:.75rem;">
+                            <div class="text-muted mt-2" style="font-size:.75rem;">
                                 <i class="bx bx-info-circle me-1"></i>Alat scanner otomatis mengisi kolom ini. Tekan
                                 <kbd>Enter</kbd> atau <strong>OK</strong> untuk memproses.
                             </div>
                         </div>
 
+                        {{-- Separator --}}
+                        <div class="d-flex align-items-center my-4">
+                            <hr class="flex-grow-1">
+                            <span class="px-3 small fw-bold text-muted" style="letter-spacing: 1px;">ATAU</span>
+                            <hr class="flex-grow-1">
+                        </div>
+
                         {{-- ⑤ TOMBOL Scan via Kamera --}}
-                        <div id="start-box" class="text-center mb-2">
+                        <div id="start-box" class="text-center mb-3">
                             <button id="btn-start" class="btn btn-outline-danger px-4" onclick="startScanner()">
                                 <i class="bx bx-camera me-1"></i>Scan via Kamera
                             </button>
@@ -130,8 +173,10 @@
         let html5QrCode = null;
         let cameraRunning = false;
 
-        /* ─── Tangkap Enter dari alat scanner ─── */
-        document.getElementById('scan-input').addEventListener('keydown', function(e) {
+        /* ─── Tangkap Enter & Input dari alat scanner ─── */
+        const scanInput = document.getElementById('scan-input');
+
+        scanInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 processScanInput();
