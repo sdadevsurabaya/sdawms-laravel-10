@@ -173,6 +173,12 @@
         let html5QrCode = null;
         let cameraRunning = false;
 
+        /* ─── Deteksi Perangkat Mobile/Tablet ─── */
+        function isMobile() {
+            const regex = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+            return regex.test(navigator.userAgent);
+        }
+
         /* ─── Tangkap Enter & Input dari alat scanner ─── */
         const scanInput = document.getElementById('scan-input');
 
@@ -194,9 +200,13 @@
         function handleDecodedText(decodedText) {
             const parts = decodedText.split('|');
 
-            // Selalu kosongkan input segera setelah data diambil
+            // Kosongkan input
             scanInput.value = '';
-            scanInput.focus();
+
+            // Hanya paksa fokus kembali jika BUKAN di HP/Tablet
+            if (!isMobile()) {
+                scanInput.focus();
+            }
 
             if (parts.length >= 2) {
                 const rawDate = parts[1].trim();
@@ -231,7 +241,10 @@
                 document.getElementById('error-box').classList.add('d-none');
                 document.getElementById('start-box').classList.remove('d-none');
                 document.getElementById('scanner-box').classList.add('d-none');
-                input.focus();
+
+                if (!isMobile()) {
+                    input.focus();
+                }
             });
         }
 
@@ -325,16 +338,22 @@
             });
         }
 
-        /* ─── Selalu Jaga Fokus ─── */
-        document.addEventListener('click', function(e) {
-            // Jangan ambil fokus jika yang diklik adalah tombol atau input itu sendiri
-            if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'A') {
-                scanInput.focus();
-            }
-        });
+        /* ─── Selalu Jaga Fokus (Hanya untuk Desktop) ─── */
+        if (!isMobile()) {
+            document.addEventListener('click', function(e) {
+                // Jangan ambil fokus jika yang diklik adalah tombol atau input itu sendiri
+                if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'A') {
+                    scanInput.focus();
+                }
+            });
+        }
 
         /* ─── Init ─── */
         checkCameraPermission();
-        scanInput.focus();
+
+        // Auto focus awal hanya untuk desktop
+        if (!isMobile()) {
+            scanInput.focus();
+        }
     </script>
 @endsection
