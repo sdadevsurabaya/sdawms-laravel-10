@@ -130,7 +130,7 @@
                         <div id="scanner-box" class="d-none text-center">
                             <div id="reader" class="mx-auto mb-2" style="width: 100%; max-width: 420px;"></div>
                             <div id="scan-status" class="text-muted small mb-2">Arahkan kamera ke QR Code pembelian...</div>
-                            <button id="btn-cancel" class="btn btn-outline-secondary btn-sm" onclick="cancelScanner()">
+                            <button id="btn-cancel" class="btn btn-outline-secondary btn-sm mb-2" onclick="cancelScanner()">
                                 <i class="bx bx-x me-1"></i>Batalkan / Tutup Kamera
                             </button>
                         </div>
@@ -193,12 +193,20 @@
         /* ─── Handler hasil scan (shared: kamera & alat) ─── */
         function handleDecodedText(decodedText) {
             const parts = decodedText.split('|');
+
+            // Selalu kosongkan input segera setelah data diambil
+            scanInput.value = '';
+            scanInput.focus();
+
             if (parts.length >= 2) {
                 const rawDate = parts[1].trim();
                 document.getElementById('result-date').textContent = formatDate(rawDate);
-                document.getElementById('result-raw').textContent = 'Data: ' + decodedText;
-                document.getElementById('scan-input').disabled = true;
-                document.getElementById('btn-ok').disabled = true;
+                document.getElementById('result-raw').innerHTML = `
+                    <div class="mt-2 pt-2 border-top text-start">
+                        <div class="small fw-bold text-dark mb-1">Data QR Terbaca:</div>
+                        <code class="bg-light p-2 d-block rounded text-break border shadow-sm">${decodedText}</code>
+                    </div>
+                `;
                 showPanel('result-box');
             } else {
                 document.getElementById('error-msg').textContent =
@@ -219,8 +227,6 @@
             stopCamera().then(() => {
                 const input = document.getElementById('scan-input');
                 input.value = '';
-                input.disabled = false;
-                document.getElementById('btn-ok').disabled = false;
                 document.getElementById('result-box').classList.add('d-none');
                 document.getElementById('error-box').classList.add('d-none');
                 document.getElementById('start-box').classList.remove('d-none');
@@ -282,7 +288,6 @@
                     },
                     (decodedText) => {
                         stopCamera().then(() => {
-                            document.getElementById('scan-input').value = decodedText;
                             handleDecodedText(decodedText);
                         });
                     },
@@ -320,8 +325,16 @@
             });
         }
 
+        /* ─── Selalu Jaga Fokus ─── */
+        document.addEventListener('click', function(e) {
+            // Jangan ambil fokus jika yang diklik adalah tombol atau input itu sendiri
+            if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'A') {
+                scanInput.focus();
+            }
+        });
+
         /* ─── Init ─── */
         checkCameraPermission();
-        document.getElementById('scan-input').focus();
+        scanInput.focus();
     </script>
 @endsection
