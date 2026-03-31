@@ -294,9 +294,9 @@
                     
                     document.getElementById('res-qr-raw').textContent = decodedText;
                     document.getElementById('res-id-rakitan').textContent = data.ID_RAKITAN || idValue;
-                    document.getElementById('res-nama-customer').textContent = customerValue;
+                    document.getElementById('res-nama-customer').textContent = data.nama_cust || customerValue;
                     document.getElementById('res-no-faktur').textContent = data.No_Faktur || '-';
-                    document.getElementById('res-tanggal').textContent = data.Tanggal ? data.Tanggal.split(' ')[0] : '-';
+                    document.getElementById('res-tanggal').textContent = data.Tanggal ? data.Tanggal.split(' ')[0].split('-').reverse().join('-') : '-';
                     document.getElementById('res-spesifikasi').textContent = data.NAMA_RAKITAN || '-';
 
                     showPanel('result-box');
