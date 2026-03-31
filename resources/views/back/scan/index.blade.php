@@ -147,26 +147,26 @@
                                         <table class="table table-sm table-borderless mb-0">
                                             <tbody>
                                                 <tr class="border-bottom">
-                                                    <th class="ps-3 py-2 text-muted fw-normal" style="width: 130px;">ID Rakitan</th>
+                                                    <th class="ps-3 py-2 text-muted fw-normal" style="width: 130px;">ID Rakitan :</th>
                                                     <td class="pe-3 py-2 fw-bold text-dark" id="res-id-rakitan">-</td>
                                                 </tr>
                                                 <tr class="border-bottom">
-                                                    <th class="ps-3 py-2 text-muted fw-normal">Nama Customer</th>
+                                                    <th class="ps-3 py-2 text-muted fw-normal">Nama Customer :</th>
                                                     <td class="pe-3 py-2 fw-bold text-primary" id="res-nama-customer">-</td>
                                                 </tr>
                                                 <tr class="border-bottom">
-                                                    <th class="ps-3 py-2 text-muted fw-normal">No Faktur</th>
+                                                    <th class="ps-3 py-2 text-muted fw-normal">No Faktur :</th>
                                                     <td class="pe-3 py-2 fw-bold text-dark" id="res-no-faktur">-</td>
                                                 </tr>
                                                 <tr class="border-bottom">
-                                                    <th class="ps-3 py-2 text-muted fw-normal">Tanggal</th>
+                                                    <th class="ps-3 py-2 text-muted fw-normal">Tanggal :</th>
                                                     <td class="pe-3 py-2 fw-bold text-dark" id="res-tanggal">-</td>
                                                 </tr>
                                             </tbody>
                                         </table>
                                         <div class="p-3 border-top bg-light bg-opacity-10">
-                                            <div class="text-muted small fw-bold text-uppercase mb-2" style="letter-spacing: 0.5px; font-size: 0.7rem;">
-                                                <i class="bx bx-list-ul me-1"></i>Deskripsi Spesifikasi
+                                            <div class="ps-3 py-2 text-muted fw-normal">
+                                                Deskripsi Spesifikasi :
                                             </div>
                                             <div class="fw-bold text-dark text-wrap lh-base" id="res-spesifikasi" style="font-size: 0.9rem;">-</div>
                                         </div>
