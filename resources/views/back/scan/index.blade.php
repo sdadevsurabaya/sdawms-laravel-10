@@ -166,7 +166,7 @@
                                                             <span>:</span>
                                                         </div>
                                                     </th>
-                                                    <td class="pe-3 py-2 fw-bold text-primary" id="res-nama-customer">-</td>
+                                                    <td class="pe-3 py-2 fw-bold text-dark" id="res-nama-customer">-</td>
                                                 </tr>
                                                 <tr class="border-bottom">
                                                     <th class="ps-3 py-2 text-muted fw-normal">
