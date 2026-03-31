@@ -13,6 +13,7 @@ use App\Http\Controllers\Back\ItemController;
 use App\Http\Controllers\Back\ScanController;
 use App\Http\Controllers\Back\UserController;
 use App\Http\Controllers\Back\WmsApiController;
+use App\Http\Controllers\Back\RakitanApiController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -63,6 +64,7 @@ Route::middleware(['auth', 'user.roles:2'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/back/scan-qr', [ScanController::class, 'index'])->name('scan.qr');
+    Route::get('/back/rakitan-data', [RakitanApiController::class, 'getData'])->name('rakitan.data');
 
     // WMS API Proxy — realtime, tanpa cache
     Route::prefix('api/wms')->name('api.wms.')->group(function () {

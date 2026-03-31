@@ -136,17 +136,55 @@
                         </div>
 
                         {{-- ⑦ Result --}}
-                        <div id="result-box" class="d-none text-center">
-                            <div class="alert alert-success d-flex flex-column align-items-center gap-1 py-4">
-                                <i class="bx bx-calendar-check" style="font-size: 2.5rem;"></i>
-                                <div class="fw-bold" style="font-size: 1rem;">Tanggal Pembelian</div>
-                                <div id="result-date" class="display-6 fw-bold text-success"></div>
-                                <div id="result-raw" class="text-muted mt-1" style="font-size:.74rem;word-break:break-all;">
+                        <div id="result-box" class="d-none">
+                            <div class="card border-success shadow-none mb-3 overflow-hidden">
+                                <div class="card-header bg-success text-white py-2 d-flex align-items-center gap-2 border-0">
+                                    <i class="bx bx-check-circle fs-5"></i>
+                                    <span class="fw-bold small text-uppercase">Data Berhasil Ditemukan</span>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-borderless mb-0">
+                                            <tbody>
+                                                <tr class="border-bottom">
+                                                    <th class="ps-3 py-2 text-muted fw-normal" style="width: 130px;">ID Rakitan</th>
+                                                    <td class="pe-3 py-2 fw-bold text-dark" id="res-id-rakitan">-</td>
+                                                </tr>
+                                                <tr class="border-bottom">
+                                                    <th class="ps-3 py-2 text-muted fw-normal">Nama Customer</th>
+                                                    <td class="pe-3 py-2 fw-bold text-primary" id="res-nama-customer">-</td>
+                                                </tr>
+                                                <tr class="border-bottom">
+                                                    <th class="ps-3 py-2 text-muted fw-normal">No Faktur</th>
+                                                    <td class="pe-3 py-2 fw-bold text-dark" id="res-no-faktur">-</td>
+                                                </tr>
+                                                <tr class="border-bottom">
+                                                    <th class="ps-3 py-2 text-muted fw-normal">Tanggal</th>
+                                                    <td class="pe-3 py-2 fw-bold text-dark" id="res-tanggal">-</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="ps-3 py-2 text-muted fw-normal align-top">Spesifikasi</th>
+                                                    <td class="pe-3 py-2 small fw-semibold text-dark text-wrap" id="res-spesifikasi">-</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
-                            <button class="btn btn-outline-secondary btn-sm mt-1" onclick="resetAll()">
-                                <i class="bx bx-refresh me-1"></i>Scan Berikutnya
-                            </button>
+                            <div class="text-center">
+                                <button class="btn btn-outline-secondary btn-sm" onclick="resetAll()">
+                                    <i class="bx bx-refresh me-1"></i>Scan Berikutnya
+                                </button>
+                            </div>
+                        </div>
+
+                        {{-- Loading Box --}}
+                        <div id="loading-box" class="d-none text-center py-5">
+                            <div class="spinner-border text-danger mb-3" role="status" style="width: 2.5rem; height: 2.5rem;">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <div class="text-muted fw-semibold">Mengambil data Rakitan...</div>
+                            <div class="small text-muted mt-1">Mohon tunggu sebentar</div>
                         </div>
 
                         {{-- ⑧ Error --}}
@@ -197,8 +235,10 @@
         }
 
         /* ─── Handler hasil scan (shared: kamera & alat) ─── */
-        function handleDecodedText(decodedText) {
+        async function handleDecodedText(decodedText) {
             const parts = decodedText.split('|');
+            const idValue = parts[0]?.trim();
+            const customerValue = parts[2]?.trim() || '-';
 
             // Kosongkan input
             scanInput.value = '';
@@ -208,26 +248,43 @@
                 scanInput.focus();
             }
 
-            if (parts.length >= 2) {
-                const rawDate = parts[1].trim();
-                document.getElementById('result-date').textContent = formatDate(rawDate);
-                document.getElementById('result-raw').innerHTML = `
-                    <div class="mt-2 pt-2 border-top text-start">
-                        <div class="small fw-bold text-dark mb-1">Data QR Terbaca:</div>
-                        <code class="bg-light p-2 d-block rounded text-break border shadow-sm">${decodedText}</code>
-                    </div>
-                `;
-                showPanel('result-box');
-            } else {
-                document.getElementById('error-msg').textContent =
-                    'Format QR tidak dikenali. Data terbaca: ' + decodedText;
-                showPanel('error-box');
+            if (!idValue) {
+                showError('Format QR tidak dikenali (ID Kosong). Terbaca: ' + decodedText);
+                return;
+            }
+
+            // Tampilkan loading panel
+            showPanel('loading-box');
+
+            try {
+                const response = await fetch(`{{ route('rakitan.data') }}?id=${idValue}`);
+                
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const result = await response.json();
+
+                if (result.success && result.data && result.data.length > 0) {
+                    const data = result.data[0];
+                    
+                    document.getElementById('res-id-rakitan').textContent = data.ID_RAKITAN || idValue;
+                    document.getElementById('res-nama-customer').textContent = customerValue;
+                    document.getElementById('res-no-faktur').textContent = data.No_Faktur || '-';
+                    document.getElementById('res-tanggal').textContent = data.Tanggal ? data.Tanggal.split(' ')[0] : '-';
+                    document.getElementById('res-spesifikasi').textContent = data.NAMA_RAKITAN || '-';
+
+                    showPanel('result-box');
+                } else {
+                    showError('Data Rakitan tidak ditemukan di server.');
+                }
+            } catch (err) {
+                console.error('Fetch Error:', err);
+                showError('Gagal mengambil data dari server. Periksa koneksi internet Anda.');
             }
         }
 
         /* ─── Tampilkan panel result/error (tanpa menutup input area) ─── */
         function showPanel(id) {
-            ['result-box', 'error-box'].forEach(p =>
+            ['result-box', 'error-box', 'loading-box'].forEach(p =>
                 document.getElementById(p).classList.toggle('d-none', p !== id)
             );
         }
