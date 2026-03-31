@@ -140,32 +140,56 @@
                             <div class="card border-success shadow-none mb-3 overflow-hidden">
                                 <div class="card-header bg-success text-white py-2 d-flex align-items-center gap-2 border-0">
                                     <i class="bx bx-check-circle fs-5"></i>
-                                    <span class="fw-bold small text-uppercase">Data Berhasil Ditemukan</span>
+                                    <span class="fw-bold small text-uppercase">Order Details</span>
                                 </div>
                                 <div class="card-body p-0">
+                                    <div class="p-3 border-bottom bg-light bg-opacity-50">
+                                        <div class="small fw-bold text-dark mb-1">Data QR Terbaca:</div>
+                                        <code class="bg-white p-2 d-block rounded text-break border shadow-sm small text-muted" id="res-qr-raw">-</code>
+                                    </div>
                                     <div class="table-responsive">
                                         <table class="table table-sm table-borderless mb-0">
                                             <tbody>
                                                 <tr class="border-bottom">
-                                                    <th class="ps-3 py-2 text-muted fw-normal" style="width: 130px;">ID Rakitan :</th>
+                                                    <th class="ps-3 py-2 text-muted fw-normal" style="width: 145px;">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span>ID Rakitan</span>
+                                                            <span>:</span>
+                                                        </div>
+                                                    </th>
                                                     <td class="pe-3 py-2 fw-bold text-dark" id="res-id-rakitan">-</td>
                                                 </tr>
                                                 <tr class="border-bottom">
-                                                    <th class="ps-3 py-2 text-muted fw-normal">Nama Customer :</th>
+                                                    <th class="ps-3 py-2 text-muted fw-normal">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span>Customer</span>
+                                                            <span>:</span>
+                                                        </div>
+                                                    </th>
                                                     <td class="pe-3 py-2 fw-bold text-primary" id="res-nama-customer">-</td>
                                                 </tr>
                                                 <tr class="border-bottom">
-                                                    <th class="ps-3 py-2 text-muted fw-normal">No Faktur :</th>
+                                                    <th class="ps-3 py-2 text-muted fw-normal">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span>No Faktur</span>
+                                                            <span>:</span>
+                                                        </div>
+                                                    </th>
                                                     <td class="pe-3 py-2 fw-bold text-dark" id="res-no-faktur">-</td>
                                                 </tr>
                                                 <tr class="border-bottom">
-                                                    <th class="ps-3 py-2 text-muted fw-normal">Tanggal :</th>
+                                                    <th class="ps-3 py-2 text-muted fw-normal">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span>Tanggal</span>
+                                                            <span>:</span>
+                                                        </div>
+                                                    </th>
                                                     <td class="pe-3 py-2 fw-bold text-dark" id="res-tanggal">-</td>
                                                 </tr>
                                             </tbody>
                                         </table>
                                         <div class="p-3 border-top bg-light bg-opacity-10">
-                                            <div class="ps-3 py-2 text-muted fw-normal">
+                                            <div class="py-2 text-muted fw-normal">
                                                 Deskripsi Spesifikasi :
                                             </div>
                                             <div class="fw-bold text-dark text-wrap lh-base" id="res-spesifikasi" style="font-size: 0.9rem;">-</div>
@@ -268,6 +292,7 @@
                 if (result.success && result.data && result.data.length > 0) {
                     const data = result.data[0];
                     
+                    document.getElementById('res-qr-raw').textContent = decodedText;
                     document.getElementById('res-id-rakitan').textContent = data.ID_RAKITAN || idValue;
                     document.getElementById('res-nama-customer').textContent = customerValue;
                     document.getElementById('res-no-faktur').textContent = data.No_Faktur || '-';
