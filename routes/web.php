@@ -10,7 +10,7 @@ use App\Http\Controllers\Back\BranchController;
 use App\Http\Controllers\Back\WarehouseController;
 use App\Http\Controllers\Back\RackController;
 use App\Http\Controllers\Back\ItemController;
-use App\Http\Controllers\Back\ScanController;
+// use App\Http\Controllers\Back\ScanController;
 use App\Http\Controllers\Back\UserController;
 use App\Http\Controllers\Back\WmsApiController;
 use App\Http\Controllers\Back\RakitanApiController;
@@ -63,7 +63,7 @@ Route::middleware(['auth', 'user.roles:2'])->group(function () {
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/back/scan-qr', [ScanController::class, 'index'])->name('scan.qr');
+    // Route::get('/back/scan-qr', [ScanController::class, 'index'])->name('scan.qr');
     Route::get('/back/rakitan-data', [RakitanApiController::class, 'getData'])->name('rakitan.data');
 
     // WMS API Proxy — realtime, tanpa cache
@@ -80,4 +80,14 @@ Route::prefix('back')->group(function () {
     Route::resource('warehouse', WarehouseController::class);
     Route::resource('rack', RackController::class);
     Route::resource('item', ItemController::class);
+});
+
+Route::fallback(function () {
+    if (Auth::check()) {
+        if ((int) Auth::user()->role_id === 1) {
+            return redirect()->route('admin.dashboard');
+        }
+        return redirect()->route('gudang.dashboard');
+    }
+    return redirect('/');
 });

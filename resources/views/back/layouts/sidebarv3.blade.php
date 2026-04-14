@@ -92,7 +92,7 @@
                     </ul>
                 @endif
             @endauth
-            <ul class="menu_item">
+            {{-- <ul class="menu_item">
                 <div class="menu_title flex">
                     <span class="title">Tools</span>
                     <span class="line"></span>
@@ -103,7 +103,7 @@
                         <span>Scan QR</span>
                     </a>
                 </li>
-            </ul>
+            </ul> --}}
             <ul class="menu_item">
                 <div class="menu_title flex">
                     <span class="title">Logout</span>
