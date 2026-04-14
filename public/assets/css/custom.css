@@ -13,8 +13,17 @@ body {
 
 html,
 body {
-    font-family: Helvetica, sans-serif;
+    font-family: 'Roboto', sans-serif !important;
 }
+
+:root {
+    --bs-font-sans-serif: 'Roboto', sans-serif !important;
+}
+
+* {
+    font-family: 'Roboto', sans-serif;
+}
+
 
 ul {
     padding: 0;
