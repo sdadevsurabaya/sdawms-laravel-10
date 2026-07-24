@@ -173,10 +173,13 @@
 
         document.addEventListener('submit', function(e) {
             const form = e.target;
-            // Kecualikan form yang pakai fetch manual (logout) atau yang punya data-no-loading
-            if (form.id === 'logout-form' || form.id === 'nav-logout-form' || form.dataset.noLoading !== undefined)
+            // Kecualikan jika event diprevent (AJAX), form logout, atau bertanda data-no-loading
+            if (e.defaultPrevented || form.id === 'logout-form' || form.id === 'nav-logout-form' || form.dataset.noLoading !== undefined)
                 return;
-            glShow('Menyimpan data...');
+
+            const method = (form.getAttribute('method') || 'get').toLowerCase();
+            const msg = form.dataset.loadingText || (method === 'get' ? 'Mencari data...' : 'Menyimpan data...');
+            glShow(msg);
         });
     </script>
 

@@ -48,7 +48,7 @@
                         <button class="btn btn-warning" type="submit">Cari Rack</button>
                     </div>
                 </form> --}}
-                <form id="searchRackForm" onsubmit="searchRack(event)">
+                <form id="searchRackForm" onsubmit="searchRack(event)" data-no-loading>
                     <div class="input-group">
                         <input type="text" id="searchRackInput" class="form-control" placeholder="Cari kode rack...">
                         <button class="btn btn-warning" type="submit">Cari Rack</button>
@@ -57,7 +57,7 @@
 
             </div>
             <div class="col-md-4 mb-2">
-                <form id="searchProductForm" onsubmit="searchProduct(event)">
+                <form id="searchProductForm" onsubmit="searchProduct(event)" data-no-loading>
                     <div class="input-group">
                         <input type="text" id="searchProductInput" class="form-control"
                             placeholder="Cari nama/kode barang...">
@@ -142,7 +142,7 @@
                                 }
                             }
 
-                            function onScanSuccess(decodedText, decodedResult) {
+                            async function onScanSuccess(decodedText, decodedResult) {
                                 countSuccessScan = (scanCode === decodedText) ? countSuccessScan + 1 : 1;
                                 scanCode = decodedText;
 
@@ -151,161 +151,32 @@
                                     html5QrcodeScanner.clear();
                                     $('#scannerModal').modal('hide');
 
-                                    // Process Rack API first, then Product
-                                    const endpoints = [{
-                                            id: 'rack-api-result',
-                                            titleId: 'rackResultTitle',
-                                            tableId: '#rackDataTable',
-                                            url: `/api/wms/rack/${decodedText}`,
-                                            columns: [{
-                                                    data: 'barcode',
-                                                    defaultContent: ''
-                                                },
-                                                {
-                                                    data: 'id_brg',
-                                                    defaultContent: ''
-                                                },
-                                                {
-                                                    data: 'nama_brg',
-                                                    defaultContent: ''
-                                                },
-                                                {
-                                                    data: 'merk',
-                                                    defaultContent: ''
-                                                },
-                                                {
-                                                    data: 'qty',
-                                                    defaultContent: ''
-                                                },
-                                                {
-                                                    data: 'id_satuan',
-                                                    defaultContent: ''
-                                                },
-                                                {
-                                                    data: 'keterangan',
-                                                    defaultContent: ''
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            id: 'product-api-result',
-                                            titleId: 'productResultTitle',
-                                            tableId: '#productDataTable',
-                                            url: `/api/wms/product/${decodedText}`,
-                                            columns: [{
-                                                    data: 'rack_number',
-                                                    defaultContent: ''
-                                                },
-                                                {
-                                                    data: 'barcode',
-                                                    defaultContent: ''
-                                                },
-                                                {
-                                                    data: 'id_brg',
-                                                    defaultContent: ''
-                                                },
-                                                {
-                                                    data: 'nama_brg',
-                                                    defaultContent: ''
-                                                },
-                                                {
-                                                    data: 'merk',
-                                                    defaultContent: ''
-                                                },
-                                                {
-                                                    data: 'qty',
-                                                    defaultContent: ''
-                                                },
-                                                {
-                                                    data: 'id_satuan',
-                                                    defaultContent: ''
-                                                },
-                                                {
-                                                    data: 'keterangan',
-                                                    defaultContent: ''
-                                                }
-                                            ]
-                                        }
-                                    ];
-
-                                    async function fetchAndDisplay(endpoint) {
-                                        const resultDiv = document.getElementById(endpoint.id);
-                                        const cardElement = resultDiv.querySelector('.card');
-                                        if (cardElement) cardElement.style.display = 'none';
-                                        resultDiv.innerHTML = `<div class="alert alert-info">Memuat data barcode: ${decodedText}</div>`;
-                                        resultDiv.style.display = 'block';
-
-                                        try {
-                                            const response = await fetch(endpoint.url);
-                                            if (!response.ok) throw new Error('Gagal mengambil data dari server.');
-                                            const data = await response.json();
-
-                                            if (!data?.data?.length) {
-                                                resultDiv.innerHTML =
-                                                    `<div class="alert alert-warning">Data tidak ditemukan untuk ${endpoint.id.includes('rack') ? 'rack' : 'produk'}: ${decodedText}</div>`;
-                                                return false;
+                                    // Try fetching Rack API first, fallback to Product API
+                                    try {
+                                        const rackResp = await fetch(`/api/wms/rack/${encodeURIComponent(decodedText)}`);
+                                        if (rackResp.ok) {
+                                            const rackData = await rackResp.json();
+                                            if (rackData && rackData.data && rackData.data.length > 0) {
+                                                renderRackResult(rackData, decodedText);
+                                                return;
                                             }
-
-                                            resultDiv.innerHTML = cardElement ? '' : `
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-${endpoint.id.includes('rack') ? 'primary' : 'danger'} text-white">
-                            <strong>Hasil Pencarian untuk ${endpoint.id.includes('rack') ? 'Rack' : 'Produk'}: <span id="${endpoint.titleId}"></span></strong>
-                        </div>
-                        <div class="card-body">
-                            <table id="${endpoint.tableId.slice(1)}" class="table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        ${endpoint.id.includes('rack') ? '' : '<th>Rack Number</th>'}
-                                        <th>Barcode</th>
-                                        <th>Item ID</th>
-                                        <th>Item Name</th>
-                                        <th>Brand</th>
-                                        <th>Qty</th>
-                                        <th>Unit</th>
-                                        <th>Notes</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>`;
-
-                                            if (cardElement) resultDiv.appendChild(cardElement);
-                                            const titleSpan = resultDiv.querySelector(`#${endpoint.titleId}`);
-                                            if (titleSpan) titleSpan.textContent = data.id;
-
-                                            const tableInstance = endpoint.id.includes('rack') ? rackDataTableInstance :
-                                                productDataTableInstance;
-                                            if (tableInstance) tableInstance.destroy();
-
-                                            const newInstance = $(endpoint.tableId).DataTable({
-                                                data: data.data,
-                                                columns: endpoint.columns,
-                                                destroy: true,
-                                                paging: true,
-                                                searching: true,
-                                                ordering: true,
-                                                info: true,
-                                                responsive: true
-                                            });
-
-                                            if (endpoint.id.includes('rack')) rackDataTableInstance = newInstance;
-                                            else productDataTableInstance = newInstance;
-
-                                            if (cardElement) cardElement.style.display = 'block';
-                                            resultDiv.style.display = 'block';
-                                            return true;
-                                        } catch (err) {
-                                            console.error(err);
-                                            resultDiv.innerHTML = `<div class="alert alert-danger">Terjadi kesalahan: ${err.message}</div>`;
-                                            return false;
                                         }
+                                    } catch (e) {
+                                        console.error('Scan rack error:', e);
                                     }
 
-                                    (async () => {
-                                        const rackSuccess = await fetchAndDisplay(endpoints[0]);
-                                        if (!rackSuccess) await fetchAndDisplay(endpoints[1]);
-                                    })();
+                                    try {
+                                        const prodResp = await fetch(`/api/wms/product/${encodeURIComponent(decodedText)}`);
+                                        if (prodResp.ok) {
+                                            const prodData = await prodResp.json();
+                                            renderProductResult(prodData, decodedText);
+                                            return;
+                                        }
+                                    } catch (e) {
+                                        console.error('Scan product error:', e);
+                                    }
+
+                                    renderRackResult(null, decodedText);
                                 }
                             }
 
@@ -343,12 +214,14 @@
         <div id="product-api-result" class="mt-3"></div> --}}
 
         <div id="rack-api-result" class="my-3" style="display: none;">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
+            <div id="rack-api-status"></div>
+            <div class="card shadow-sm" id="rack-api-card" style="display: none;">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <strong>Hasil Pencarian untuk Rack: <span id="rackResultTitle"></span></strong>
+                    <button type="button" class="btn-close btn-close-white" onclick="$('#rack-api-result').hide()"></button>
                 </div>
                 <div class="card-body table-responsive">
-                    <table id="rackDataTable" class="table table-bordered table-striped text-nowrap">
+                    <table id="rackDataTable" class="table table-bordered table-striped text-nowrap w-100">
                         <thead>
                             <tr>
                                 <th>Barcode</th>
@@ -368,12 +241,14 @@
         </div>
 
         <div id="product-api-result" class="my-3" style="display: none;">
-            <div class="card shadow-sm">
-                <div class="card-header bg-danger text-white">
-                    <strong>Hasil Pencarian untuk Product: <span id="productResultTitle"></span></strong>
+            <div id="product-api-status"></div>
+            <div class="card shadow-sm" id="product-api-card" style="display: none;">
+                <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+                    <strong>Hasil Pencarian untuk Barang: <span id="productResultTitle"></span></strong>
+                    <button type="button" class="btn-close btn-close-white" onclick="$('#product-api-result').hide()"></button>
                 </div>
                 <div class="card-body table-responsive">
-                    <table id="productDataTable" class="table table-bordered table-striped text-nowrap">
+                    <table id="productDataTable" class="table table-bordered table-striped text-nowrap w-100">
                         <thead>
                             <tr>
                                 <th>Rack Number</th>
@@ -768,285 +643,154 @@
     </script>
 
     <script>
-        // Deklarasikan variabel global untuk DataTables agar bisa diakses
         let rackDataTableInstance = null;
         let productDataTableInstance = null;
 
-        // Pastikan DataTables dan jQuery sudah dimuat sebelum script ini
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function renderRackResult(data, searchQuery) {
+            const $resultDiv = $('#rack-api-result');
+            const $statusDiv = $('#rack-api-status');
+            const $cardElement = $('#rack-api-card');
+
+            $resultDiv.show();
+
+            if (!data || !data.data || data.data.length === 0) {
+                $cardElement.hide();
+                $statusDiv.html(`<div class="alert alert-warning">Data tidak ditemukan untuk Rack: <strong>${escapeHtml(searchQuery)}</strong></div>`).show();
+                return false;
+            }
+
+            $statusDiv.hide().empty();
+            $('#rackResultTitle').text(data.id || searchQuery);
+
+            if ($.fn.DataTable.isDataTable('#rackDataTable')) {
+                $('#rackDataTable').DataTable().destroy();
+            }
+
+            rackDataTableInstance = $('#rackDataTable').DataTable({
+                data: data.data,
+                columns: [
+                    { data: 'barcode', defaultContent: '-' },
+                    { data: 'id_brg', defaultContent: '-' },
+                    { data: 'nama_brg', defaultContent: '-' },
+                    { data: 'merk', defaultContent: '-' },
+                    { data: 'qty', defaultContent: '0' },
+                    { data: 'id_satuan', defaultContent: '-' },
+                    { data: 'keterangan', defaultContent: '-' }
+                ],
+                destroy: true,
+                paging: true,
+                searching: true,
+                ordering: true,
+                info: true,
+                responsive: true
+            });
+
+            $cardElement.show();
+            return true;
+        }
+
+        function renderProductResult(data, searchQuery) {
+            const $resultDiv = $('#product-api-result');
+            const $statusDiv = $('#product-api-status');
+            const $cardElement = $('#product-api-card');
+
+            $resultDiv.show();
+
+            if (!data || !data.data || data.data.length === 0) {
+                $cardElement.hide();
+                $statusDiv.html(`<div class="alert alert-warning">Data tidak ditemukan untuk Barang: <strong>${escapeHtml(searchQuery)}</strong></div>`).show();
+                return false;
+            }
+
+            $statusDiv.hide().empty();
+            $('#productResultTitle').text(data.id || searchQuery);
+
+            if ($.fn.DataTable.isDataTable('#productDataTable')) {
+                $('#productDataTable').DataTable().destroy();
+            }
+
+            productDataTableInstance = $('#productDataTable').DataTable({
+                data: data.data,
+                columns: [
+                    { data: 'rack_number', defaultContent: '-' },
+                    { data: 'barcode', defaultContent: '-' },
+                    { data: 'id_brg', defaultContent: '-' },
+                    { data: 'nama_brg', defaultContent: '-' },
+                    { data: 'merk', defaultContent: '-' },
+                    { data: 'qty', defaultContent: '0' },
+                    { data: 'id_satuan', defaultContent: '-' },
+                    { data: 'keterangan', defaultContent: '-' }
+                ],
+                destroy: true,
+                paging: true,
+                searching: true,
+                ordering: true,
+                info: true,
+                responsive: true
+            });
+
+            $cardElement.show();
+            return true;
+        }
 
         function searchRack(event) {
-            event.preventDefault();
-            const rackCode = document.getElementById('searchRackInput').value.trim();
+            if (event) event.preventDefault();
+            const rackCode = $('#searchRackInput').val().trim();
             if (!rackCode) return;
 
-            const resultDiv = document.getElementById('rack-api-result');
-            const resultTitleSpan = document.getElementById('rackResultTitle');
-            const tableId = '#rackDataTable';
-            const cardElement = resultDiv.querySelector('.card'); // Ambil elemen card
+            const $resultDiv = $('#rack-api-result');
+            const $statusDiv = $('#rack-api-status');
+            const $cardElement = $('#rack-api-card');
 
-            // Sembunyikan card hasil dan tampilkan loading
-            if (cardElement) {
-                cardElement.style.display = 'none'; // Sembunyikan card utamanya
-            }
-            resultDiv.innerHTML = '<div class="alert alert-info">Memuat data dari API...</div>';
-            resultDiv.style.display = 'block'; // Pastikan container resultDiv terlihat untuk pesan loading
+            $cardElement.hide();
+            $statusDiv.html('<div class="alert alert-info"><span class="spinner-border spinner-border-sm me-2"></span>Memuat data rack...</div>').show();
+            $resultDiv.show();
 
-            fetch(`/api/wms/rack/${rackCode}`)
+            fetch(`/api/wms/rack/${encodeURIComponent(rackCode)}`)
                 .then(response => {
                     if (!response.ok) throw new Error('Gagal mengambil data dari server.');
                     return response.json();
                 })
                 .then(data => {
-                    // Hapus pesan loading
-                    resultDiv.innerHTML = '';
-
-                    if (!data || !data.data || data.data.length === 0) {
-                        resultDiv.innerHTML = '<div class="alert alert-warning">Data tidak ditemukan untuk rack: ' +
-                            rackCode + '</div>';
-                        resultDiv.style.display = 'block'; // Tampilkan resultDiv untuk pesan "tidak ditemukan"
-                        return;
-                    }
-
-                    // Pindahkan kembali struktur card ke dalam resultDiv
-                    if (!cardElement) { // Ini seharusnya tidak terjadi jika HTML sudah benar, tapi sebagai fallback
-                        resultDiv.innerHTML = `
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-primary text-white">
-                            <strong>Hasil Pencarian untuk Rack: <span id="rackResultTitle"></span></strong>
-                        </div>
-                        <div class="card-body">
-                            <table id="rackDataTable" class="table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Barcode</th>
-                                        <th>Item ID</th>
-                                        <th>Item Name</th>
-                                        <th>Brand</th>
-                                        <th>Qty</th>
-                                        <th>Unit</th>
-                                        <th>Notes</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-                `;
-                        // Perbarui referensi ke cardElement dan resultTitleSpan setelah innerHTML diubah
-                        // Ini penting jika struktur card direbuild
-                        // Ini bisa dihindari jika struktur card memang tidak pernah dihapus dengan innerHTML = ''
-                        // Untuk kesederhanaan, kita asumsikan cardElement sudah ada dari awal.
-                        // Jika ingin lebih aman, bisa refetch elemen atau simpan reference ke template string
-                    } else {
-                        resultDiv.appendChild(cardElement); // Tambahkan card element yang disembunyikan kembali
-                    }
-
-
-                    // Tampilkan kartu hasil dan judul
-                    // resultTitleSpan perlu direferensikan ulang jika DOM di dalam resultDiv diubah secara massal.
-                    // Atau, lebih baik, targetkan langsung elemen span di dalam cardElement
-                    const currentRackResultTitleSpan = resultDiv.querySelector('#rackResultTitle');
-                    if (currentRackResultTitleSpan) {
-                        currentRackResultTitleSpan.textContent = data.id;
-                    } else {
-                        // Fallback jika tidak ditemukan (misal: struktur card di HTML awal tidak ada span itu)
-                        console.warn('rackResultTitle span not found in the re-rendered card.');
-                    }
-
-
-                    // Hancurkan instance DataTables yang ada jika sudah ada
-                    if (rackDataTableInstance) {
-                        rackDataTableInstance.destroy();
-                        // DataTables.destroy() juga membersihkan tbody secara default
-                    }
-
-                    // Inisialisasi DataTables
-                    rackDataTableInstance = $(tableId).DataTable({
-                        data: data.data, // Data dari API
-                        columns: [{
-                                data: 'barcode',
-                                defaultContent: ''
-                            },
-                            {
-                                data: 'id_brg',
-                                defaultContent: ''
-                            },
-                            {
-                                data: 'nama_brg',
-                                defaultContent: ''
-                            },
-                            {
-                                data: 'merk',
-                                defaultContent: ''
-                            },
-                            {
-                                data: 'qty',
-                                defaultContent: ''
-                            },
-                            {
-                                data: 'id_satuan',
-                                defaultContent: ''
-                            },
-                            {
-                                data: 'keterangan',
-                                defaultContent: ''
-                            }
-                        ],
-                        destroy: true, // Izinkan DataTables untuk diinisialisasi ulang
-                        paging: true,
-                        searching: true,
-                        ordering: true,
-                        info: true,
-                        responsive: true
-                    });
-
-                    // Tampilkan card utama setelah DataTables dimuat
-                    if (cardElement) {
-                        cardElement.style.display = 'block';
-                    }
-                    resultDiv.style.display = 'block'; // Pastikan resultDiv (container card) juga terlihat
-
+                    renderRackResult(data, rackCode);
                 })
                 .catch(err => {
                     console.error(err);
-                    resultDiv.innerHTML = '<div class="alert alert-danger">Terjadi kesalahan saat mengambil data: ' +
-                        err.message + '</div>';
-                    resultDiv.style.display = 'block';
+                    $cardElement.hide();
+                    $statusDiv.html(`<div class="alert alert-danger">Terjadi kesalahan: ${escapeHtml(err.message)}</div>`).show();
                 });
         }
 
         function searchProduct(event) {
-            event.preventDefault();
-            const productCode = document.getElementById('searchProductInput').value.trim();
+            if (event) event.preventDefault();
+            const productCode = $('#searchProductInput').val().trim();
             if (!productCode) return;
 
-            const resultDiv = document.getElementById('product-api-result');
-            const resultTitleSpan = document.getElementById('productResultTitle');
-            const tableId = '#productDataTable';
-            const cardElement = resultDiv.querySelector('.card'); // Ambil elemen card
+            const $resultDiv = $('#product-api-result');
+            const $statusDiv = $('#product-api-status');
+            const $cardElement = $('#product-api-card');
 
-            // Sembunyikan card hasil dan tampilkan loading
-            if (cardElement) {
-                cardElement.style.display = 'none'; // Sembunyikan card utamanya
-            }
-            resultDiv.innerHTML = '<div class="alert alert-info">Memuat data dari API...</div>';
-            resultDiv.style.display = 'block'; // Pastikan container resultDiv terlihat untuk pesan loading
+            $cardElement.hide();
+            $statusDiv.html('<div class="alert alert-info"><span class="spinner-border spinner-border-sm me-2"></span>Memuat data barang...</div>').show();
+            $resultDiv.show();
 
-            fetch(`/api/wms/product/${productCode}`)
+            fetch(`/api/wms/product/${encodeURIComponent(productCode)}`)
                 .then(response => {
                     if (!response.ok) throw new Error('Gagal mengambil data dari server.');
                     return response.json();
                 })
                 .then(data => {
-                    // Hapus pesan loading
-                    resultDiv.innerHTML = '';
-
-                    if (!data || !data.data || data.data.length === 0) {
-                        resultDiv.innerHTML = '<div class="alert alert-warning">Data tidak ditemukan untuk produk: ' +
-                            productCode + '</div>';
-                        resultDiv.style.display = 'block'; // Tampilkan resultDiv untuk pesan "tidak ditemukan"
-                        return;
-                    }
-
-                    // Pindahkan kembali struktur card ke dalam resultDiv
-                    if (!cardElement) {
-                        resultDiv.innerHTML = `
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-danger text-white">
-                            <strong>Hasil Pencarian untuk Produk: <span id="productResultTitle"></span></strong>
-                        </div>
-                        <div class="card-body">
-                            <table id="productDataTable" class="table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Rack Number</th>
-                                        <th>Barcode</th>
-                                        <th>Item ID</th>
-                                        <th>Item Name</th>
-                                        <th>Brand</th>
-                                        <th>Qty</th>
-                                        <th>Unit</th>
-                                        <th>Notes</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-                `;
-                    } else {
-                        resultDiv.appendChild(cardElement);
-                    }
-
-                    // resultTitleSpan perlu direferensikan ulang jika DOM di dalam resultDiv diubah secara massal.
-                    const currentProductResultTitleSpan = resultDiv.querySelector('#productResultTitle');
-                    if (currentProductResultTitleSpan) {
-                        currentProductResultTitleSpan.textContent = data.id;
-                    } else {
-                        console.warn('productResultTitle span not found in the re-rendered card.');
-                    }
-
-                    // Hancurkan instance DataTables yang ada jika sudah ada
-                    if (productDataTableInstance) {
-                        productDataTableInstance.destroy();
-                    }
-
-                    // Inisialisasi DataTables
-                    productDataTableInstance = $(tableId).DataTable({
-                        data: data.data, // Data dari API
-                        columns: [{
-                                data: 'rack_number',
-                                defaultContent: ''
-                            },
-                            {
-                                data: 'barcode',
-                                defaultContent: ''
-                            },
-                            {
-                                data: 'id_brg',
-                                defaultContent: ''
-                            },
-                            {
-                                data: 'nama_brg',
-                                defaultContent: ''
-                            },
-                            {
-                                data: 'merk',
-                                defaultContent: ''
-                            },
-                            {
-                                data: 'qty',
-                                defaultContent: ''
-                            },
-                            {
-                                data: 'id_satuan',
-                                defaultContent: ''
-                            },
-                            {
-                                data: 'keterangan',
-                                defaultContent: ''
-                            }
-                        ],
-                        destroy: true,
-                        paging: true,
-                        searching: true,
-                        ordering: true,
-                        info: true,
-                        responsive: true
-                    });
-
-                    // Tampilkan card utama setelah DataTables dimuat
-                    if (cardElement) {
-                        cardElement.style.display = 'block';
-                    }
-                    resultDiv.style.display = 'block'; // Pastikan resultDiv (container card) juga terlihat
-
+                    renderProductResult(data, productCode);
                 })
                 .catch(err => {
                     console.error(err);
-                    resultDiv.innerHTML = '<div class="alert alert-danger">Terjadi kesalahan saat mengambil data: ' +
-                        err.message + '</div>';
-                    resultDiv.style.display = 'block';
+                    $cardElement.hide();
+                    $statusDiv.html(`<div class="alert alert-danger">Terjadi kesalahan: ${escapeHtml(err.message)}</div>`).show();
                 });
         }
     </script>

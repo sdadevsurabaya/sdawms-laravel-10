@@ -33,7 +33,18 @@ class WmsApiController extends Controller
      */
     public function byRack(string $code)
     {
-        return $this->proxyGet(['rack_number' => $code]);
+        $response = $this->proxyGet(['rack_number' => $code]);
+        $data = json_decode($response->getContent(), true);
+
+        if (empty($data['data'])) {
+            $fallbackResponse = $this->proxyGet(['search' => $code]);
+            $fallbackData = json_decode($fallbackResponse->getContent(), true);
+            if (!empty($fallbackData['data'])) {
+                return $fallbackResponse;
+            }
+        }
+
+        return $response;
     }
 
     /**
@@ -42,7 +53,18 @@ class WmsApiController extends Controller
      */
     public function byProduct(string $code)
     {
-        return $this->proxyGet(['product_number' => $code]);
+        $response = $this->proxyGet(['product_number' => $code]);
+        $data = json_decode($response->getContent(), true);
+
+        if (empty($data['data'])) {
+            $fallbackResponse = $this->proxyGet(['search' => $code]);
+            $fallbackData = json_decode($fallbackResponse->getContent(), true);
+            if (!empty($fallbackData['data'])) {
+                return $fallbackResponse;
+            }
+        }
+
+        return $response;
     }
 
     /**
